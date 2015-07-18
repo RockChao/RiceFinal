@@ -1,0 +1,287 @@
+<?php
+//author：baolei
+//date: 2014/10/14
+namespace Home\Controller;
+use Model\User\InfoUserModel;
+use Think\Controller;
+
+class RiceController extends HomeController{
+	/*
+	*更新水稻信息
+	*@param rice_kind 		   水稻信息类别，1-基本信息，2-早稻信息，3-晚稻信息
+	*@param rice_id 			   所修改的信息记录
+	*@param year               年份
+	*@param population         总人口
+	*@param agri_population    农业人口：	
+	*@param agri_area          耕地面积：
+	*@param field_area         水田面积
+	*@param total_sown_area    总播种面积
+	*@param zone_area          区域面积
+	*@param e_sown_area        早稻播种面积
+	*@param e_disaster_area    早稻受灾面积
+	*@param e_production       早稻产量
+	*@param e_market_price     早稻市场价格
+	*@param e_purchase_price   早稻收购价格
+	*@param e_fertilizer_price 早稻化肥价格
+	*@param l_sown_area        晚稻播种面积
+	*@param l_disaster_area    晚稻受灾面积
+	*@param l_production       晚稻产量
+	*@param l_market_price     晚稻市场价格
+	*@param l_purchase_price   晚稻收购价格
+	*@param l_fertilizer_price 晚稻化肥价格
+	*/
+	public function updateRice(){
+		$user_id = session('user_id');
+		$riceKind = I("rice_kind");
+		$riceModel = D("InfoRice");
+		if(IS_POST){
+			$rice_id = I("rice_id");
+			if($this->canUpdateRice($riceKind,$rice_id)){//判断是否可以更改
+				$dist_id = getDistrictIdByName(I("rice_region"));
+				$data['rice_id'] = $rice_id;
+				switch($riceKind){
+					case '1':
+						$data["rice_status"] = 2;
+						$data['user_id'] = $user_id;				
+						$data['dist_id'] =$dist_id; 
+						$data['year'] = I('year');
+						$data['population'] = I('population');
+						$data['agri_population'] = I('agri_population');
+						$data['agri_area'] = I('agri_area');
+						$data['field_area'] = I('field_area');
+						$data['total_sown_area'] = I('total_sown_area');
+						$data['zone_area'] = I('zone_area');
+						break;
+					case '2':	//早稻信息
+						$data['e_sown_area'] = I('e_sown_area');
+						$data['e_disaster_area'] = I('e_disaster_area');
+						$data['e_production'] = I('e_production');
+						$data['e_market_price'] = I('e_market_price');
+						$data['e_purchase_price'] = I('e_purchase_price');
+						$data['e_fertilizer_price'] = I('e_fertilizer_price');
+						break;
+					case '3':			//晚稻信息
+						$data['l_sown_area']= I('l_sown_area');
+						$data['l_disaster_area'] = I('l_disaster_area');
+						$data['l_production'] = I('l_production');
+						$data['l_market_price'] = I('l_market_price');
+						$data['l_purchase_price'] = I('l_purchase_price');
+						$data['l_fertilizer_price'] = I('l_fertilizer_price');
+						break;
+				}
+				//echo $data["rice_id"];
+				
+				$result = $riceModel->updateRice($data);
+				if ($result){
+					$riceModel->setRiceState($data["rice_id"], 2, $riceKind);
+					$this->success("修改成功！", U("manageRice"));	
+				}
+				else{
+					$this->error($riceModel->getError());
+				}	
+				
+			}
+			else if(empty($riceStatus)&&($riceStatus!=0)){
+				$this->error("记录不存在");
+			}	
+		}
+		else{
+			$rice_id = I('rice_id');
+			$ricedata = M("InfoRice")->where("rice_id='$rice_id'")->find();
+			$ricedata['brice_status'] = $riceModel->getBRiceState($rice_id);
+			$ricedata['erice_status'] = $riceModel->getERiceState($rice_id);
+			$ricedata['lrice_status'] = $riceModel->getLRiceState($rice_id);
+			$ricedata["rice_region"] = getDistrictNameById($ricedata["dist_id"]);
+			$this->assign("ricedata", $ricedata);
+			$this->display();
+		}	
+	}
+
+	/*
+	*删除水稻信息
+	*@param integer rice_id 将被删除水稻的id
+	*/
+	public function deleteRice(){
+		$rice_id = I("rice_id");
+		$rice = D('InfoRice');
+		if($rice ->deleteRice($rice_id))
+			$this->success("删除用户成功！");
+		else
+			$this->error(D('InfoRice')->getError);		
+	}
+
+	/*
+	*管理水稻信息
+	*/
+	public function manageRice(){
+		$user_id = session('user_id');
+		$riceModel =  D("InfoRice");
+		$rice = $riceModel->where("user_id= '$user_id'")->select();
+		foreach($rice as  &$value){
+			$dist_id = $value['dist_id'];
+			$dist_name = getDistrictNameByID($dist_id);
+			$value['dist_name'] = $dist_name;   //将地区ID换成地区名
+			//显示审核状态
+			$bstatus = $value["rice_status"] & 7;
+			$estatus = ($value["rice_status"] >>3 )& 7;
+			$lstatus = ($value["rice_status"] >>6 ) & 7;
+	
+			$value['brice_status_id'] = $riceModel->getRiceState($bstatus);
+			$value['erice_status_id'] = $riceModel->getRiceState($estatus);
+			$value['lrice_status_id'] = $riceModel->getRiceState($lstatus);
+
+			$value['brice_status'] = getRiceStatus($value['brice_status_id']);
+			$value['erice_status'] = getRiceStatus($value['erice_status_id']);
+			$value['lrice_status'] = getRiceStatus($value['lrice_status_id']);
+			//echo $value['brice_status'];
+			if ($value['brice_status_id'] != 3 || $value['erice_status_id'] != 3 || $value['lrice_status_id'] != 3){
+				$value["rice_status_id"] = 1;
+			}
+		}
+		$this->assign("ricedata", $rice);
+		$this->display();
+	}
+	
+		/*
+	*增加水稻信息记录 水稻状态 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*@param rice_kind		   水稻信息类别，1-基本信息，2-早稻信息，3-晚稻信息
+	*@param year               年份
+	*@param population         总人口
+	*@param agri_population    农业人口：	
+	*@param agri_area          耕地面积：
+	*@param field_area         水田面积
+	*@param total_sown_area    总播种面积
+	*@param zone_area          区域面积
+	*@param e_sown_area        早稻播种面积
+	*@param e_disaster_area    早稻受灾面积
+	*@param e_production       早稻产量
+	*@param e_market_price     早稻市场价格
+	*@param e_purchase_price   早稻收购价格
+	*@param e_fertilizer_price 早稻化肥价格
+	*@param l_sown_area        晚稻播种面积
+	*@param l_disaster_area    晚稻受灾面积
+	*@param l_production       晚稻产量
+	*@param l_market_price     晚稻市场价格
+	*@param l_purchase_price   晚稻收购价格
+	*@param l_fertilizer_price 晚稻化肥价格
+	*/
+	public function addRice(){
+		if (IS_POST){
+			$user_id = session('user_id');
+			$riceKind = I('rice_kind');
+			$dist_id = session("dist_id");
+
+			//判断将添加的水稻信息是否已存在
+			$riceModel = D('InfoRice');
+			$year = I('year');
+			$riceId = $riceModel->where("user_id='$user_id' and year = $year")->getField('rice_id');
+			if($riceId!=NULL){
+				if(!$this->canAddRice($riceKind,$riceId))
+					$this->error("记录已存在");
+
+			}
+
+			$data['user_id'] = $user_id;
+			$data['dist_id'] = $dist_id;
+			$data['year'] = $year;
+			$data['lastmodifed'] = date("Y-m-d H:i:s" ,time());
+
+			switch($riceKind){
+				case '1':
+					$data['population'] = I('population');
+					$data['agri_population'] = I('agri_population');
+					$data['agri_area'] = I('agri_area');
+					$data['field_area'] = I('field_area');
+					$data['total_sown_area'] = I('total_sown_area');
+					$data['zone_area'] = I('zone_area');
+					break;
+				case '2'://早稻信息
+					$data['e_sown_area'] = I('e_sown_area');
+					$data['e_disaster_area'] = I('e_disaster_area');
+					$data['e_production'] = I('e_production');
+					$data['e_market_price'] = I('e_market_price');
+					$data['e_purchase_price'] = I('e_purchase_price');
+					$data['e_fertilizer_price'] = I('e_fertilizer_price');
+					break;
+				case '3'://晚稻信息
+					$data['l_sown_area']= I('l_sown_area');
+					$data['l_disaster_area'] = I('l_disaster_area');
+					$data['l_production'] = I('l_production');
+					$data['l_market_price'] = I('l_market_price');
+					$data['l_purchase_price'] = I('l_purchase_price');
+					$data['l_fertilizer_price'] = I('l_fertilizer_price');
+					break;
+				default:
+					$this->error("请正确选择所提交水稻信息类别！");	
+			}	
+			$result = $riceModel->addRice($data,$riceKind);
+			if ($result){
+				$this->success("添加成功");	
+			}
+			else{
+				$this->error($riceModel->getError());	
+			}
+		}
+		else
+		{
+			$this->display();
+		}
+	}
+	
+	/**判断水稻信息是否可以增加 水稻状态 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*@param $rice_kind 提交稻谷信息种类 1代表基本信息 2早稻信息 3晚稻信息
+	*@param $rice_id
+	*/
+	public function canAddRice($rice_kind,$rice_id){
+		$riceStateModel = D('InfoRice');
+		switch($rice_kind){
+			case '1':
+				return $riceStateModel->getBRiceState($rice_id)==1?ture:false;
+			case '2':
+				return $riceStateModel->getERiceState($rice_id)==1?ture:false;
+			case '3':
+				return $riceStateModel->getLRiceState($rice_id)==1?ture:false;
+			default:
+				return false;
+		}
+	}
+
+	/**判断水稻信息是否可以更新
+	*水稻状态 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*@param $rice_kind 提交稻谷信息种类 1代表基本信息 2早稻信息 3晚稻信息
+	*@param $rice_id
+	*/
+	public function canUpdateRice($rice_kind,$rice_id){
+		$riceStateModel = D('InfoRice');
+		switch($rice_kind){
+			case '1':
+				$temp = $riceStateModel->getBRiceState($rice_id);
+				break;
+			case '2':
+				$temp = $riceStateModel->getERiceState($rice_id);
+				break;
+			case '3':
+				$temp = $riceStateModel->getLRiceState($rice_id);
+				break;
+			default:
+				return false;
+		}
+		if(($temp==2)||($temp==4))
+			return ture;
+		else if($temp==1)
+			$this->error("该信息尚未提交");
+		else if($temp==3)
+			$this->error("水稻已提交，尚未通过");
+		else
+			return false;
+	}
+//for test
+	public function test()
+	{
+		$riceModel = M('InfoRice');
+		$riceInfoState = $riceModel->where("rice_id='100'")->getField('rice_status');//获取状态
+		echo $riceInfoState;
+
+	}
+}
+

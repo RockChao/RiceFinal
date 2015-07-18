@@ -1,0 +1,9 @@
+<?php
+//作者：刘建安
+//时间：2014/11/17
+namespace Admin\Model;
+use Model;
+
+class InfoGuestModel extends Model/User/InfoUserModel{
+	protected $_validate = array();
+}

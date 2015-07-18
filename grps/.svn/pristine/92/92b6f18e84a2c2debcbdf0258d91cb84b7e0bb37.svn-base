@@ -1,0 +1,101 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Admin\Controller;
+
+class DisasterController extends AdminController{
+/*  显示所有灾难的简略信息 */
+	public function manageDisaster(){
+		$disater = M("InfoDisaster");
+		$data = $disater->select();
+		foreach($data as &$value){
+			$value["disa_dist"] = getDistrictNameById($value["disa_dist"]);
+			$value["disa_situ"] = getDisaSituById($value["disa_situ"]);
+			$value["disa_status_id"] = $value["disa_status"];
+			$value["disa_status"] = getDisasterStatus($value["disa_status"]);
+			$value["disa_begindate"] = date("Y-m-d", strtotime($value["disa_begindate"]));
+			$value["disa_enddate"] = date("Y-m-d", strtotime($value["disa_enddate"]));
+		}
+		$this->assign("disadata", $data);
+		$this->display();
+	}
+	
+	/* 显示审核灾难的页面  */
+	public function uncheckDisaster(){
+		$disater = M("InfoDisaster");
+		$disadata = $disater->where("disa_status=2")->select();
+		foreach($disadata as &$value){
+			$value["disa_dist"] = getDistrictNameById($value["disa_dist"]);
+			$value["disa_status"] = getDisasterStatus($value["disa_status"]);
+			$value["disa_situ"] = getDisaSituById($value["disa_situ"]);
+		}
+		$this->assign("disasterdata", $disadata);
+		$this->display();
+	}
+	/*  审核灾难 */
+	public function checkDisaster(){
+		if (IS_POST){
+			if (!empty($_POST["failed"])){  //驳回信息
+				$failed = true;	 //
+			}
+			else{
+				$failed = false;
+			}
+			$disaster = D("InfoDisaster");
+			$did = I("disa_id");
+
+			$result = $disaster->checkDisaster($did, $failed);
+			if ($result){
+				$this->success("审核成功", U("uncheckDisaster"));	
+			}
+			else{
+				$this->error("审核失败", U("uncheckDisaster"));	
+			}
+		}
+		else{
+			$did = I("disa_id");
+			$disater = M("InfoDisaster");
+			$data = $disater->where("disa_id='$did'")->find();
+			$data["disa_dist"] = getDistrictNameById($data["disa_dist"]);
+			$data["disa_situ"] = getDisaSituById($data["disa_situ"]);
+			$data["disa_begindate"] = date("Y-m-d", strtotime($data["disa_begindate"]));
+			$data["disa_enddate"] = date("Y-m-d", strtotime($data["disa_enddate"]));
+			$this->assign("disasterdata", $data);
+			$this->display();
+		}
+	}
+
+	/*
+		更新灾难信息
+	*/
+	public function updateDisaster(){
+		$disa_id = I("disa_id");
+		if(IS_POST){
+			$disaster = D("InfoDisaster");
+			$data["disa_dist"] = I("disa_dist");
+			$data["disa_begindate"] = I("disa_begindate");
+			$data["disa_enddate"] = I("disa_enddate");
+			$data["disa_situ"] = I("disa_situ");
+			$data["disa_area"] = I("disa_area");
+			$data["disa_eloss"] = I("disa_eloss");
+
+			$result = $disaster->updateDisaster($data);
+			if($result){
+				$this->success("修改成功！", U("manageDisaster"));
+			}
+			else{
+				$this->redirect(U("updateDisaster"),"",3, $disaster->getError());
+			}
+		}
+		else{
+			$disaster = M("InfoDisaster");
+			$data = $disaster->where("disa_id='$disa_id'")->find();
+			$data["disa_begindate"] = date("Y-m-d", strtotime($data["disa_begindate"]));
+			$data["disa_enddate"] = date("Y-m-d", strtotime($data["disa_enddate"]));
+			$data["disa_dist"] = getDistrictNameById($data["disa_dist"]);
+			$data["disa_situ"] = getDisaSituById($data["disa_situ"]);
+			$this->assign("disadata", $data);
+			$this->display();
+		}
+	}
+}

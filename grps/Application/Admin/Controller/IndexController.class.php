@@ -1,0 +1,50 @@
+<?php
+namespace Admin\Controller;
+
+class IndexController extends AdminController {
+	
+	
+    public function index(){
+    	$rice = M("InfoRice");
+    	//$ricedata = $rice->where("rice_status=1")->select();
+	    $dist = M("InfoDistrict");
+	    $distlist = $dist->select();
+	    $citylist =  array();
+	    foreach($distlist as $key => $value){
+	    	if ($value["dist_id"] == $value["dist_belongto"]){
+	    	    array_push($citylist, $value);
+	    	}	
+	    }
+
+	    $withinOneMonth =  date("Y-m-d H:i:s", strtotime("-1 months"));
+	    $disaster = M("InfoDisaster");
+	    $dist = M("InfoDistrict");
+	    $disaData = $disaster->where("disa_status=2 and disa_date>'$withinOneMonth'")->select();
+	    foreach($disaData as &$value){
+	    	$value["disa_situ"] = getDisaSituById($value["disa_situ"]);
+	    	$value["disa_begindate"] = date("Y-m-d", strtotime($value["disa_begindate"]));
+			$value["disa_enddate"] = date("Y-m-d", strtotime($value["disa_enddate"]));
+	    }
+	    $disalist = $this->getDisasterData();
+	    $ricedata["disa_number"] = count($disalist);
+	    $wavedata = $this->getWaveRice();
+	    $ricedata["wave_number"] = count($wavedata);
+	    $this->assign("ricedata", $ricedata);
+	    $this->assign("wavedata", $wavedata);
+	    $this->assign("disalist", $disalist); 
+	    $this->assign("distlist", $distlist);
+	    $this->assign("distdata", $disaData);
+	    $this->assign("citylist", $citylist);
+	    $this->display();
+     }
+      
+      //更新地图位置
+    public function show(){
+        $dist_latitude = I('lati');
+		$dist_longitude = I('long');
+        session("dist_latitude", $dist_latitude);
+    	session("dist_longitude", $dist_longitude);
+        $this->redirect('index');      
+    }
+}
+

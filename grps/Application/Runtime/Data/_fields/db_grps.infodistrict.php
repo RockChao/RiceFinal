@@ -1,0 +1,1 @@
+a:7:{i:0;s:7:"dist_id";i:1;s:9:"dist_name";i:2;s:13:"dist_belongto";i:3;s:13:"dist_latitude";i:4;s:14:"dist_longitude";s:3:"_pk";s:7:"dist_id";s:5:"_type";a:5:{s:7:"dist_id";s:7:"int(10)";s:9:"dist_name";s:11:"varchar(11)";s:13:"dist_belongto";s:7:"int(11)";s:13:"dist_latitude";s:6:"double";s:14:"dist_longitude";s:6:"double";}}

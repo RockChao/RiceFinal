@@ -1,0 +1,32 @@
+<?php
+//作者：刘建安
+//时间：2014/11/8
+namespace Guest\Controller;
+use Think\Controller;
+
+class RiceController extends UserController{
+
+	public function manageRice(){
+		$rice = M("InfoRice");
+		$ricedata = $rice->where("rice_status=1")->select();   //得到水稻信息
+		foreach($ricedata as  &$value){
+			$dist_id = $value['dist_id'];
+			$dist_name = getDistrictNameByID($dist_id);
+			$value['dist_name'] = $dist_name;   //将地区ID换成地区名
+			//显示审核状态
+			$value['rice_status'] = getRiceStatus($value['rice_status']);
+		}
+		$this->assign("ricedata",$ricedata);
+		$this->display();	
+	}
+	
+	/*   列出一项水稻的所有信息 */
+	public function detailRice(){
+		$rice_id = I("rice_id");
+		$rice = M("InfoRice");
+		$ricedata = $rice->where("rice_id='$rice_id'")->find();
+		$ricedata["dist_name"] = getDistrictNameById($ricedata["dist_id"]);
+		$this->assign("value", $ricedata);
+		$this->display();
+	}
+}

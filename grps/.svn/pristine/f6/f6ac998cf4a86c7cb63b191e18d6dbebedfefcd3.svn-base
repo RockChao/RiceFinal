@@ -1,0 +1,47 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Home\Model;
+use Model;
+use Think;
+
+class InfoDisasterModel extends  Model\Disaster\InfoDisasterModel {
+	protected $auto = array(
+	array("disa_status", 2),
+	);
+	
+	/*  添加灾难信息 */
+	public function addDisaster($data){
+		if ($this->create($data)){
+			$did = $this->add($data);
+			if ($did){
+				return true;	
+			}
+			else{  //添加灾难信息失败
+				$this->error = "添加失败！";
+				return false;	
+			}
+		}
+		else{  //添加灾难信息失败
+			return false;
+		}
+	}
+	/*  更新水稻信息 */
+	public function updateDisaster($data){
+		if(!empty($data)){
+			$disa_id = $data["disa_id"];
+			if ($this->create($data)){
+				$result = $this->where("disa_id")->save($data);
+				if ($result)
+					return true;
+				else{
+					$this->error = "修改信息失败，未知原因！";
+					return false;	
+				}
+			}
+			else{
+				return false;	
+			}
+		}
+	}
+}

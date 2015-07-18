@@ -1,0 +1,35 @@
+<?php
+return array(
+	//'配置项'=>'配置值'
+	'URL_CASE_INSENSITIVE' => true,
+	'MA_DEBUG'=> false,
+	'DB_TYPE'=>'mysql',
+	'DB_HOST'=>'localhost',
+	'DB_NAME'=>'db_grps',
+	'DB_USER'=>'root',
+	'DB_PWD' =>'2014grps',
+	'DB_PORT'=>'3306',
+	'DB_CHARSET'=>'utf8',
+	'DB_FIELD_CACHE'=>false,
+	'URL_MODEL'=>0,
+	'VAR_FILTERS'=>'htmlspecialchars',
+	'MODULE_ALLOW_LIST'    =>    array(
+		'Admin',
+		'Home',
+		'User',
+		'Guest'),
+	//'DEFAULT_MODULE'        =>  'Home',
+	//'MULTI_MODULE'          =>  true,
+	'SHOW_PAGE_TRACE' =>true,
+	'PAGE_TRACE_SAVE'=>true ,
+	'TRACE_PAGE_TABS'=>array(
+     'base'=>'基本',
+     'file'=>'文件',
+     'think'=>'流程',
+     'error'=>'错误',
+     'sql'=>'SQL',
+     'debug'=>'调试',
+     'user'=>'用户'
+	),
+
+);

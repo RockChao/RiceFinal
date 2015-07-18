@@ -1,0 +1,30 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Home\Model;
+use Model\Disater\InfoDisasterModel;
+use Model;
+use Think;
+
+class InfoDisasterModel extends  Model\Disater\InfoDisasterModel {
+	protected $auto = array(
+	array("disa_status", 0),
+	);
+	
+	/*  添加灾难信息 */
+	public function addDisaster($data){
+		if ($this->create($data)){
+			$did = $this->add($data);
+			if ($did){
+				return true;	
+			}
+			else{  //添加灾难信息失败
+				$this->error = "添加失败！";
+				return false;	
+			}
+		}
+		else{  //添加灾难信息失败
+			return false;
+		}
+	}
+}

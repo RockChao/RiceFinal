@@ -1,0 +1,452 @@
+<?php
+//author: baolei
+//date: 2014/10/14
+
+namespace Model\Rice;
+use Think\Model;
+
+
+abstract class InfoRiceModel extends Model{
+	//基本指标验证规则
+	protected $_validateForBRice = array(
+		array("dist_id",'require', '地区不为空'), //水稻所在区县必须
+		array('year', 'require', '年份不为空'), //年份必须
+		array('year','/^[0-9]*[1-9][0-9]*$/u','年份应为4位正整数',self::EXISTS_VALIDATE,'regex'),//年份是正整数
+		array('year','1,4','年份应为4位正整数',self::EXISTS_VALIDATE,'length'),
+		array('population', 'require', '地区人口不能为空'), //地区总人口必须
+		array('population','/^[0-9]*[1-9][0-9]*$/u','人口应为不超过10位正整数',self::EXISTS_VALIDATE,'regex'),//人口是正整数
+		//array('population', 'get_required_files()', -3), //地区总人口必须
+		array('population','1,10','人口应为不超过10位正整数',self::EXISTS_VALIDATE,'length'),
+
+		array('agri_population', 'require', '农业人口不能为空'), //农业人口必须
+		array('agri_population','/^[0-9]*[1-9][0-9]*$/u','人口应为不超过10位正整数',self::EXISTS_VALIDATE,'regex'),//人口是正整数
+		//array('agri_population', 'get_required_files()', -3), //农业总人口必须
+		array('agri_population','1,10','人口应为不超过10位正整数',self::EXISTS_VALIDATE,'length'),
+
+		array('agri_area', 'require', '耕地面积不能为空'), //耕地面积必须
+		//耕地面积范围为大于0且最多有两位小数的14位实数
+		array('agri_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','耕地面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('agri_area','1,14','耕地面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+
+		array('field_area', 'require', '水田面积不能为空'), //水田面积必须
+		//数字范围为大于0且最多有两位小数的14位实数
+		array('field_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','水田面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('field_area','1,14','水田面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+
+		array('total_sown_area', 'require', '总播种面积不能为空'), //总播种面积必须
+		//数字范围为大于0且最多有两位小数的14位实数
+		array('total_sown_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','水田面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('total_sown_area','1,14','水田面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+
+		array('zone_area', 'require', '地区总面积不能为空'), //地区总面积必须
+		array('zone_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','地区总面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('zone_area','1,14','地区总面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		);
+	//早稻基本指标验证规则
+	protected $_validateForERice = array(
+		//早稻
+		array('e_sown_area', 'require', '早稻播种面积不能为空'), //早稻播种面积必须
+		array('e_sown_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','早稻播种面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('e_sown_area','1,14','早稻播种面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('e_disaster_area', 'require', '早稻受灾面积不能为空'), //早稻受灾面积必须
+		array('e_disaster_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','早稻受灾面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('e_disaster_area','1,14','早稻受灾面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('e_production', 'require', '早稻产量不能为空'), //早稻产量必须
+		array('e_production','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','早稻产量范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('e_production','1,14','早稻产量范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('e_market_price', 'require', '早稻市场价格不能为空'), //早稻市场价格必须
+		array('e_market_price','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','早稻市场价格范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('e_market_price','1,14','早稻市场价格范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('e_purchase_price', 'require', '早稻收购价格不能为空'), //早稻收购价格必须
+		array('e_purchase_price','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','早稻收购价格为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('e_purchase_price','1,14','早稻收购价格为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('e_fertilizer_price', 'require', '早稻肥料价格不能为空'), //早稻肥料价格必须
+		array('e_fertilizer_price','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','早稻肥料价格范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('e_fertilizer_price','1,14','早稻肥料价格范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+	);
+	//晚稻基本指标验证规则
+	protected $_validateForLRice = array(	
+		array('l_sown_area', 'require', '晚稻播种面积不能为空'), //晚稻播种面积必须
+		array('l_sown_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','晚稻播种面积为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('l_sown_area','1,14','晚稻播种面积为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('l_disaster_area', 'require', '晚稻受灾面积不能为空'), //晚稻受灾面积必须
+		array('l_disaster_area','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','晚稻受灾面积为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('l_disaster_area','1,14','晚稻受灾面积为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('l_production', 'require', '晚稻产量不能为空'), //晚稻产量必须
+		array('l_production','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','晚稻产量为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('l_production','1,14','晚稻产量为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('l_market_price', 'require', '晚稻市场价格不能为空'), //晚稻市场价格必须
+		array('l_market_price','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','晚稻市场价格为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('l_market_price','1,14','水田面积范围为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('l_purchase_price', 'require', '晚稻收购价格不能为空'), //晚稻收购价格必须
+		array('l_purchase_price','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','晚稻收购价格为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('l_purchase_price','1,14','晚稻收购价格为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		
+		array('l_fertilizer_price', 'require', '晚稻肥料价格不能为空'), //晚稻肥料价格必须
+		array('l_fertilizer_price','/^((0-9)+\.([0-9]*[1-9][0-9]*){0,2})$|^([0-9]*[1-9][0-9]*\.([0-9]+){0,2})$|^([0-9]*[1-9][0-9]*)$/u','晚稻肥料价格为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'regex'),
+		array('l_fertilizer_price','1,14','晚稻肥料价格为大于0且最多有两位小数的14位实数',self::EXISTS_VALIDATE,'length'),
+		);
+	
+	/* 添加水稻信息
+	* 水稻状态 1未提交 2提交审核中 3提交已通过 4提交未通过
+	* @param array $data 水稻信息
+	* @param integer $riceKind 水稻信息类别，1-基本信息，2-早稻信息，3-晚稻信息
+	* @return 成功-rid， 失败-返回错误信息
+	*/
+	public function addRice($data,$riceKind){
+			// calculateIndicator()//计算指标 ::TODO
+		switch($riceKind){
+			case '1':
+				$validateRule = $this->_validateForBRice;
+				break;
+			case '2':
+				$validateRule = $this->_validateForERice;
+				break;
+			case '3':
+				$validateRule = $this->_validateForLRice;
+				break;
+			default:
+				$this->error="添加水稻失败，未知原因，请正确选择所提交水稻信息类别！";
+				return false;
+		}
+		
+		if ($this->validate($validateRule)->create($data)){
+			$this->startTrans();//启动事务
+			
+			if($id = $this->where("dist_id = '$data[dist_id]' and year = '$data[year]'")->getField('rice_id')){//一条记录由由年份和地区标记
+				$this->where("rice_id='$id'")->save();
+			}
+			else if($id=$this->add($data)){
+				;//空
+			}
+			else{
+				$this->error = "添加水稻失败,未知原因1!";
+				return false; //添加失败
+			}	
+			
+			//设置水稻信息状态
+			if($this->setRiceState($id,2,$riceKind)){//设置水稻状态 2 表示水稻提交审核中
+				$this->commit();//事务提交
+				return ture; //添加成功
+			}
+			else{
+				$this->rollback();//事务回滚
+				$this->error = "添加水稻失败，未知原因2！";
+				return false;
+			} 
+		}
+		else{
+			$this->error = "添加水稻失败,未知原因2!";
+			return false; //添加失败
+		}	 
+	}
+	
+	/*  更新水稻信息 */
+	abstract public function updateRice($data, $modifier, $reason);
+	
+	/* 计算水稻指标 */
+	public function calculateIndicator($data){
+		$year = $data["year"];
+		$dist_id = $data["dist_id"];
+		$last_three_data = $this->where("year<'$year'  and year >= ('$year'-3) and dist_id='$dist_id'")->select();   //该地区近三年的数据
+		$current_year_data = $this->where("year='$year'")->select();  //全国当年的数据
+		$last_year_data = $this->where("year=('$year'-1)  and dist_id='$dist_id'")->find();  //该地区去年的数据
+			
+		$data1['last_three_e_sown_area'] = 0;  //早稻近三年平均亩产
+		$data1['last_three_l_sown_area'] = 0;  // 晚稻近三年平均亩产
+	
+		if (count($last_three_data) < 3){
+			$data1['last_three_e_sown_area'] = 0;
+			$data1['last_three_l_sown_area'] = 0;
+		}
+		else{
+			foreach($last_three_data as $key1 => $value1){
+				$data1['last_three_e_sown_area'] += $value1['ae_yield_permu'];
+				$data1['last_three_l_sown_area'] += $value1['al_yield_permu'];
+			}
+			$data1['last_three_e_sown_area'] = $data1['last_three_e_sown_area'] * 1.0 / 3;
+			$data1['last_three_l_sown_area']  = $data1['last_three_l_sown_area']  * 1.0 / 3;
+		}
+		
+		
+		$data1['ae_all_planting_stru'] = 0;  // 早稻全国平均播种结构
+		$data1['al_all_planting_stru'] = 0;   //晚稻全国平均播种结构
+		foreach($current_year_data as $key => $value){
+			$data1['ae_all_planting_stru'] += $value['ae_planting_stru'];
+			$data1['al_all_planting_stru'] += $value['al_planting_stru'];
+		}
+		$data1['ae_all_planting_stru'] /= count($current_year_data);
+		$data1['al_all_planting_stru'] /= count($current_year_data);
+
+		$data1['ae_best_yield_permu']  = $this->where("dist_id='$dist_id'")->max("ae_yield_permu");  //早稻亩产最高水平
+		$data1['al_best_yield_permu'] = $this->where("dist_id='$dist_id'")->max("al_yield_permu");  //晚稻亩产最高水平
+		
+		if (!empty($last_year_data) ){
+			$data1['last_e_market_price'] = $last_year_data["e_market_price"];
+			$data1['last_e_production'] = $last_year_data["e_production"];
+			$data1['last_e_sown_area'] = $last_year_data["e_sown_area"];
+			$data1['last_ae_yield_permu'] = 0;
+			
+			$data1['last_l_market_price']   = $last_year_data["l_market_price"];
+			$data1['last_l_production'] = $last_year_data["l_production"];
+			$data1['last_l_sown_area'] = $last_year_data["l_sown_area"];
+			$data1['last_al_yield_permu'] = 0;
+		}
+		else{
+			$data1['last_e_market_price'] = $data["e_market_price"];
+			$data1['last_e_production'] = $data["e_production"];
+			$data1['last_e_sown_area'] = $data["e_sown_area"];
+			$data1['last_ae_yield_permu'] = 0;
+			
+			$data1['last_l_market_price']   = $data["l_market_price"];
+			$data1['last_l_production'] = $data["l_production"];
+			$data1['last_l_sown_area'] = $data["l_sown_area"];
+			$data1['last_al_yield_permu'] = 0;
+		}
+		return $this->_calculate($data,$data1);
+	}
+	
+	/*  根据水稻的基本指标算出分析指标 
+	默认
+	$data1['last_three_e_sown_area']  早稻近三年平均亩产 .
+	$data1['ae_all_planting_stru']    早稻全国平均播种结构.
+	$data1['ae_best_yield_permu']      早稻亩产最高水平(0.01公斤/亩).
+	$data1['last_three_l_sown_area']    晚稻近三年平均亩产.
+	$data1['al_all_planting_stru']      晚稻全国平均播种结构.
+	 $data1['al_best_yield_permu']       晚稻亩产最高水平(0.01公斤/亩).
+	 
+	 $data['last_e_market_price']       上年早稻市场价格(0.01元/公斤)
+	 $data['last_e_production']        上年早稻产量(0.01千公斤) 
+	 $data['last_e_sown_area']       上年早稻播种面积 (0.01亩)
+	 $data['last_ae_yield_permu']    上年早稻亩产(0.01公斤/亩) 
+	 
+	 $data['last_l_market_price']        上年晚稻市场价格(0.01元/公斤)
+	 $data['last_l_production']         上年晚稻产量(0.01千公斤)
+	 $data['last_l_sown_area']         上年晚稻播种面积 (0.01亩)
+	 $data['last_al_yield_permu']       上年晚稻亩产(0.01公斤/亩)
+	 是算好的
+	  */
+	protected function _calculate($data, $data1){
+		//早稻分析指标（9个）
+		$data['ae_yield_permu'] = $data['e_production'] * 1000 / $data['e_sown_area'];  //	早稻亩产水平(0.01公斤/亩) =早稻 产量(千公斤) / 早稻播种面积(0.01亩) * 1000   !
+		$data['ae_planting_stru'] = $data['e_sown_area'] / $data['total_sown_area'];  //早稻播种结构(0.01%) = 早稻水稻播种面积(0.01亩) / 早稻总播种面积(0.01亩)
+		$data['ae_area_disasterr'] = $data['e_disaster_area'] / $data['e_sown_area'];  //	早稻面积受灾率(0.01%) = 早稻水稻受灾面积(0.01亩 )/ 早稻水稻播种面积(0.01亩)
+		$data['ae_suppose_yield'] = 	$data1['last_three_e_sown_area'] *  $data['e_sown_area'] / 1000; // 早稻应该产量 (0.01千公斤)= 早稻近三年平均亩产(0.01公斤/亩) * 早稻水稻播种面积(0.01亩) / 1000     !
+		$data['ae_actual_yield']  = $data['e_production']; //早稻实际产量 (0.01千公斤)= 早稻上报产量(0.01千公斤)
+		$data['ae_yield_disasterr'] = ($data['ae_suppose_yield'] - $data['ae_actual_yield'] ) / $data['ae_suppose_yield']; //	早稻产量受灾率 = （早稻应该产量(0.01千公斤) - 早稻实际产量(0.01千公斤)） /  早稻应该产量(0.01千公斤)
+		if($data1['last_three_e_sown_area'] == 0)
+			$data['ae_potential_yield_sownaera'] = 0;
+		else
+			$data['ae_potential_yield_sownaera']  	=  $data1['ae_all_planting_stru'] *  $data['e_sown_area'] * $data1['last_three_e_sown_area'] / 1000 - $data['ae_actual_yield'] ;//早稻播种面积潜力产量(0.01千公斤) = 早稻全国平均播种结构(0.01%) * 早稻总播种面积(0.01亩) * 早稻近三年平均亩产(0.01公斤/亩) / 1000– 早稻实际产量(0.01千公斤)    !
+		$data['ae_rice_fertilizer']  = $data['e_market_price'] / ($data['e_fertilizer_price'] / 100 ); //早稻稻肥比价(0.01%) = 早稻市场价格(0.01元/公斤) / 早稻化肥价格(0.01元/百公斤) * 100          !
+		$data['ae_potential_yield_permu'] = $data1['ae_best_yield_permu'] *  $data['e_sown_area'] / 1000 ;  //早稻亩产潜力产量(0.01千公斤) = 早稻亩产最高水平(0.01公斤/亩) * 早稻水稻播种面积(0.01亩) / 1000        !
+		
+		//晚稻分析指标(9个)
+		$data['al_yield_permu'] =  $data['l_production'] * 1000 / $data['l_sown_area'] ;  //晚稻亩产水平(0.01公斤/亩) = 晚稻产量(千公斤) /  晚稻播种面积(0.01亩) * 1000    !
+		$data['al_planting_stru'] =  $data['l_sown_area'] / $data['total_sown_area'] ;  //晚稻播种结构(0.01%) = 晚稻播种面积(0.01亩)/ 晚稻总播种面积(0.01亩)
+		$data['al_area_disasterr'] =  $data['l_disaster_area'] / $data['l_sown_area'];  //晚稻面积受灾率(0.01%) = 晚稻受灾面积(0.01亩)/  晚稻播种面积(0.01亩)
+		$data['al_suppose_yield'] = $data1['last_three_l_sown_area'] *  $data['l_sown_area'] / 1000; // 晚稻应该产量 (0.01千公斤) = 晚稻近三年平均亩产(0.01公斤/亩) * 晚稻水稻播种面积(0.01亩) / 1000    !
+		$data['al_actual_yield'] =  $data['l_production']; //	晚稻实际产量 (0.01千公斤)= 晚稻上报产量(0.01千公斤)
+		$data['al_yield_disasterr'] =  ($data['al_suppose_yield'] - $data['al_actual_yield'] ) / $data['al_suppose_yield'];  //晚稻产量受灾率 = （晚稻应该产量(0.01千公斤) - 晚稻实际产量(0.01千公斤)） /  应该产量(0.01千公斤)
+		if ($data1['last_three_l_sown_area'] == 0)
+			$data['al_potential_yield_sownaera'] = 0;
+		else
+			$data['al_potential_yield_sownaera'] =  $data1['al_all_planting_stru'] *  $data['l_sown_area'] * $data1['last_three_l_sown_area'] / 1000 - $data['al_actual_yield'];	//晚稻播种面积潜力产量(0.01千公斤) = 晚稻全国平均播种结构(0.01%) * 晚稻总播种面积(0.01亩) * 晚稻近三年平均亩产((0.01公斤/亩) / 1000 – 晚稻实际产量(0.01千公斤)        !
+		$data['al_rice_fertilizer'] = $data['l_market_price'] / ($data['l_fertilizer_price'] / 100 );  //晚稻稻肥比价(0.01%) = 晚稻水稻市场价格(0.01元/公斤) / 晚稻化肥价格(0.01元/百公斤) * 100        !
+	    $data['al_potential_yield_permu'] =   $data1['al_best_yield_permu'] *  $data['l_sown_area']  / 1000; //晚稻亩产潜力产量(0.01千公斤) = 晚稻亩产最高水平(0.01公斤/亩) * 晚稻水稻播种面积(0.01亩)  / 1000          !
+		
+		//全年分析指标(9个)
+		$data['ay_yield_permu'] = ($data['ae_yield_permu'] + $data['al_yield_permu'])  * 1.0 / 2;   //全年亩产水平(0.01公斤/亩) = (早稻亩产水平 +晚稻亩产水平 ) / 2
+		$data['ay_planting_stru'] = ($data['ae_planting_stru'] + $data['al_planting_stru'] ) * 1.0 / 2;  //全年播种结构(0.01%) = 水稻播种面积(0.01亩)/总播种面积(0.01亩)
+	    $data['ay_area_disasterr'] = ( $data['ae_area_disasterr'] + $data['al_area_disasterr'])  * 1.0 / 2;   //全年面积受灾率(0.01%) = ( 早稻面积受灾率+晚稻面积受灾率) / 2
+		$data['ay_suppose_yield'] =  ($data['ae_suppose_yield'] + $data['al_suppose_yield'])  * 1.0 / 2;  // 全年应该产量 =( 早稻实际产量 + 晚稻实际产量) / 2
+		$data['ay_actual_yield'] = ($data['ae_actual_yield'] +$data['al_actual_yield'] )  * 1.0 / 2;   //全年实际产量 (0.01千公斤)= (早稻实际产量 + 晚稻实际产量) / 2
+		$data['ay_yield_disasterr'] = ($data['ae_yield_disasterr']  + $data['al_yield_disasterr'])  * 1.0 / 2;   //全年产量受灾率 = (早稻产量受灾率 +晚稻产量受灾率 ) / 2
+		$data['ay_potential_yield_sownaera'] = ($data['ae_potential_yield_sownaera'] + $data['al_potential_yield_sownaera'] )  * 1.0 / 2;   //全年播种面积潜力产量(0.01千公斤) = (早稻播种面积潜力产量 + 晚稻播种面积潜力产量 ) / 2
+		$data['ay_rice_fertilizer'] = ($data['ae_rice_fertilizer'] + $data['al_rice_fertilizer'])  * 1.0 / 2;   //全年稻肥比价(0.01%) = (早稻稻肥比价 + 晚稻稻肥比价) / 2
+		$data['ay_potential_yield_permu'] = ($data['ae_potential_yield_permu']  + $data['al_potential_yield_permu'])  * 1.0 / 2;  //全年亩产潜力产量(0.01千公斤) = (早稻亩产潜力产量 + 晚稻亩产潜力产量) / 2
+		
+		//波动分析（12个）
+		$data['we_price_fluctuation'] =  ($data1['last_e_market_price'] - $data['e_market_price']) * 1.0 / $data['e_market_price'];  //早稻价格波动 = （上年早稻市场价格(0.01元/公斤)– 实际早稻市场价格(0.01元/公斤)）/（实际早稻市场价格(0.01元/公斤)）
+		$data['we_yield_fluctuation'] = ( $data1['last_e_production'] -  $data['e_production'])  * 1.0 /  $data['e_production'];   //早稻产量波动 = （上年早稻产量(0.01千公斤) – 实际早稻产量(0.01千公斤)）/（实际早稻产量(0.01千公斤)）
+        $data['we_area_fluctuation'] =   ($data1['last_e_sown_area'] - $data['e_sown_area'])   * 1.0 / $data['e_sown_area']; //早稻面积波动 = （上年早稻播种面积 (0.01亩)– 实际早稻播种面积(0.01亩)）/（实际早稻播种面积(0.01亩)）
+        if ($data1['last_ae_yield_permu'] == 0)
+        	$data['we_yield_permu_fluctuation'] = 0;
+        else 
+	    	$data['we_yield_permu_fluctuation'] = ($data1['last_ae_yield_permu'] - $data['ae_yield_permu'])   * 1.0 / $data['ae_yield_permu'];   //早稻亩产波动 = （上年早稻亩产(0.01公斤/亩) – 实际早稻亩产(0.01公斤/亩)）/（实际早稻亩产(0.01公斤/亩)）
+	    
+		$data['wl_price_fluctuation'] =   ($data1['last_l_market_price'] - $data['l_market_price'])  * 1.0 / $data['l_market_price'];  //晚稻价格波动 = （上年晚稻市场价格(0.01元/公斤)– 实际晚稻市场价格(0.01元/公斤)）/（实际晚稻市场价格(0.01元/公斤)）
+		$data['wl_yield_fluctuation'] =  ( $data1['last_l_production'] -  $data['l_production'] )   * 1.0 /  $data['l_production'] ;  //晚稻产量波动 = （上年晚稻产量(0.01千公斤) – 实际晚稻产量(0.01千公斤)）/（实际晚稻产量(0.01千公斤)）
+		$data['wl_area_fluctuation'] = ($data1['last_l_sown_area']  - $data['l_sown_area'] )  * 1.0 / $data['l_sown_area'] ;  //晚稻面积波动 = （上年晚稻播种面积 (0.01亩)– 实际晚稻播种面积(0.01亩)）/（实际晚稻播种面积(0.01亩)）
+		if ($data1['last_al_yield_permu'] == 0)
+			$data['wl_yield_permu_fluctuation'] = 0;
+		else
+	 		$data['wl_yield_permu_fluctuation'] =  ($data1['last_al_yield_permu'] - $data['al_yield_permu'])  * 1.0 / $data['al_yield_permu'];   //晚稻亩产波动 = （上年晚稻亩产(0.01公斤/亩) – 实际晚稻亩产(0.01公斤/亩)）/（实际晚稻亩产(0.01公斤/亩)）
+		
+		$data['wy_price_fluctuation'] =  ($data['we_price_fluctuation']  + $data['wl_price_fluctuation'])  * 1.0 / 2;  //年平均价格波动 = (早稻价格波动  + 晚稻价格波动) / 2
+		$data['wy_yield_fluctuation'] = ($data['we_yield_fluctuation'] +$data['wl_yield_fluctuation'] )  * 1.0  / 2;  //年平均产量波动 = (早稻产量波动 +晚稻产量波动 ) / 2
+		$data['wy_area_fluctuation'] =   ($data['we_area_fluctuation'] +$data['wl_area_fluctuation'] ) / 2;//年平均面积波动 = (早稻面积波动 + 晚稻面积波动) / 2
+		$data['wy_yield_permu_fluctuation'] = ( $data['we_yield_permu_fluctuation'] + $data['wl_yield_permu_fluctuation']) * 1.0 / 2;   //年平均亩产波动 = (早稻亩产波动 +晚稻亩产波动 ) / 2
+		return $data;
+	}
+
+	/**判断水稻状态
+	*@param integer $riceInfoState 低三位有意义，1位：0-未提交，1-已提交
+	*                                            2位：0-已审核，1-审核中
+	*                                            2位：0-未通过，1-已通过
+	*                                            外其余位为0；
+	*@return integer  1未提交 2提交审核中 3提交已通过 4提交未通过 5非法状态;
+	*/
+	public function getRiceState($riceInfoState){
+		switch($riceInfoState){
+			case '0':return 1;//未提交过数据
+			case '1':return 4;//已提交已审核未通过
+			case '3':return 2;//已提交审核中
+			case '5':return 3;//已提交已审核已通过
+			case '2':
+			case '4':
+			case '6':
+			case '7':
+				return 5;//非法状态
+		} 
+	}
+	
+	/*
+	返回所有早稻、晚稻或基本信息中有处于审核中状态的整条水稻信息
+	*/
+	public function getUncheckRice(){
+		$ricedata  = $this->select();
+		$data = array();
+		foreach($ricedata as $key => $value){
+			$bstatus = $value["rice_status"] & 7;
+			$estatus = ($value["rice_status"] >>3 )& 7;
+			$lstatus = ($value["rice_status"] >>6 ) & 7;
+			
+			$bstatus = $this->getRiceState($bstatus);
+			$estatus = $this->getRiceState($estatus);
+			$lstatus = $this->getRiceState($lstatus);
+			if ($bstatus == 2 ||$estatus  == 2 ||$lstatus   == 2){
+				$value["brice_status"] = getRiceStatus($bstatus);
+				$value["erice_status"] = getRiceStatus($estatus);
+				$value["erice_status"] = getRiceStatus($lstatus);
+				$value["dist_name"] = getDistrictNameById($value["dist_id"]);
+				array_push($data,$value);	
+			}
+		}
+		return $data;	
+	}
+	
+	/**
+	*获取稻谷基本信息记录状态
+	*@param integer $rice_id 水稻信息id
+	*return integer 0获取失败 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*/
+	public function getBRiceState($rice_id){
+		$riceInfoState = $this->where("rice_id='$rice_id'")->getField('rice_status');//获取状态
+		if(empty($riceInfoState)&&$riceInfoState!=0){
+			$this->error = "未知原因，获取失败！";
+			return 0;
+		}
+	    $riceInfoState =  $riceInfoState & 7;//低三位为标志水稻基本信息 ******XXX
+		return $this->getRiceState($riceInfoState);
+	}		
+
+	/**获取早稻信息记录状态
+	*@param integer $rice_id 水稻信息id
+	*return integer 0获取失败 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*/
+	public function getERiceState($rice_id){
+		$riceInfoState = $this->where("rice_id='$rice_id'")->getField('rice_status');
+		if(empty($riceInfoState)&&$riceInfoState!=0){
+			$this->error = "未知原因，获取失败！";
+			return 0;
+		}
+		$riceInfoState = $riceInfoState>>3;//次三位标志早稻状态 ***XXX***
+	    $riceInfoState = $riceInfoState & 7;
+		return $this->getRiceState($riceInfoState);
+	}
+	
+	/**获取晚稻信息记录状态
+	*@param integer $rice_id 水稻信息id
+	*return integer 水稻状态 0获取失败 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*/
+	public function getLRiceState($rice_id){
+		$riceInfoState = $this->where("rice_id='$rice_id'")->getField('rice_status');
+		if(empty($riceInfoState)&&$riceInfoState!=0){
+			$this->error = "未知原因，获取失败！";
+			return 0;
+		}
+		$riceInfoState = $riceInfoState>>6;//高三位标志晚稻状态 XXX******
+	    $riceInfoState = $riceInfoState & 7;
+		return $this->getRiceState($riceInfoState);
+	}
+
+	/*
+	*获取水稻信息状态从系统逻辑设置到数据库存储值的映射
+	*@param integer $state 水稻信息状态的系统逻辑表示
+	*@return integer 0,3,5,1 成功，返回水稻信息状态的数据库存储值表示；失败-1
+	*/
+	public function getRiceStatus($state){
+		switch($state){
+			case '1'://未提交过数据
+				return 0;
+				break;
+			case '2'://已提交审核中
+				return 3;
+				break;
+			case '3'://已提交已审核已通过
+				return 5;
+				break;
+			case '4'://已提交已审核未通过
+				return 1;
+				break;
+			default:
+				return -1;
+		}
+	}
+
+	/**
+	*设置水稻信息
+	*@param integer $rice_id 水稻信息id
+	*@param integer $state 水稻状态  0获取失败 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*@param rice_kind		   水稻信息类别，1-基本信息，2-早稻信息，3-晚稻信息
+	*@return ture 成功， false 失败
+	*/
+	public function setRiceState($rice_id,$state,$riceKind){
+
+		$riceStatus = $this->getRiceStatus($state);//获取水稻信息状态从系统逻辑设置到数据库存储值的映射
+		if($riceStatus==-1){
+			$this->error = "未知错误，输入状态有误!";
+			return false;
+		}
+
+		//-----------------------------------------------------------------
+		//--将$riceStatus      转化成111XXX111  X表示即将更改的位
+		//--把$riceInfoState   装换成***111***  *表示保持原来数据不变
+		//--$riceStatus | $riceInfoState = ***XXX***从而实现修改不同类别水稻信息标志位的修改
+		//---------------------------------------------------------------
+		$offset = ($riceKind-1)*3;
+		$riceStatus =(~0<<3|$riceStatus)<<$offset|(pow(2,$offset)-1);//取低三位，其余为为1 111XXX111;
+		$riceInfoState = $this->where("rice_id='$rice_id'")->getField('rice_status');//获取状态
+
+		if(empty($riceInfoState)&&$riceInfoState!=0){
+			$this->error = "未知原因，获取失败！";
+			return 0;
+		}
+		$riceInfoState = ($riceInfoState|(7<<$offset))&$riceStatus;//448 = 111000000
+
+		if($this->where("rice_id='$rice_id'")->setField('rice_status',$riceInfoState))		
+			return ture;
+		else 
+			return false;
+	}
+}

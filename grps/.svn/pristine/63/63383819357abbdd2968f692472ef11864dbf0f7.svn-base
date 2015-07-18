@@ -1,0 +1,60 @@
+<?php
+//作者：刘建安
+//时间：2014/11/8
+namespace Guest\Controller;
+use Think\Controller;
+
+class UserController extends Controller{
+	public function index(){
+		if (!isset($_SESSION['user_name'])){
+			$this->redirect("Index/index",array('cate_id' => 2), 1, "请先登录！");	
+		}
+	}
+	
+	/*
+		用户登录
+		@param arary $POST
+			$user_name,
+			$user_pw
+	*/	
+	public function login(){
+		if (IS_POST){
+			$data['user_name'] = I("user_name");
+			$data['user_pw'] = I("user_pw");
+			$user = D("InfoUser");
+			
+			$uid = $user->login($data);
+			if ($uid){   //登录成功
+				session("dist_latitude", 23.082389);
+	    	    session("dist_longitude", 113.313729);
+				$this->redirect(U("Index/index"),"",0);	
+			}
+			else{    //登录失败
+				$this->error($user->getError());
+			}	
+		}
+		else{
+			$this->display();	
+		}
+	}
+	
+	/*  用户注销 */
+	public function logout(){
+		$user = D("InfoUser");
+		$user->logout();	
+		 $this->redirect('User/login');
+	}
+	
+	public function showInfo(){
+		$user = D("InfoUser");
+		$user_id = session('user_id');
+		$data = $user->getInfo($user_id);
+		if($data == false)
+			$this->error($user->error);
+		else{
+			$this->assign("userdata", $data);
+			$this->display();
+		}
+	}
+}
+?>

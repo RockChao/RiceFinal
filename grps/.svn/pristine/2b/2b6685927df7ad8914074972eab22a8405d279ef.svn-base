@@ -1,0 +1,239 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<title>广东省市县稻谷预警系统</title>
+
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css"/>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery.js"></script>
+	</head>
+	<body>
+				<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo U('Index/index')?>">广东省市县稻谷预警系统</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li>
+							<a href="<?php echo U('Index/index')?>">首页</a>
+						</li>
+						<li role="dropdown">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">用户管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                        		<li><a href="<?php echo U('User/addUser')?>">用户新增</a></li>
+                            	<li><a href="<?php echo U('User/manageUser')?>">用户查看</a></li>
+                        	</ul>
+                    	</li>
+						
+						<li >
+							 <li role="dropdown"  class="active">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">水稻管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                           		<li><a href="<?php echo U('Rice/uncheckRice')?>">水稻审核</a></li>
+                            	<li><a href="<?php echo U('Rice/manageRice')?>">水稻查看</a></li>
+                        	</ul>
+                    	</li>
+						<li>
+							<a href="<?php echo U('Rice/searchRice')?>" class="login">条件查询</a>
+						</li>
+
+						<li>
+							<a href="<?php echo U('User/logout')?>" class="logout">注销</a>
+						</li>
+					</ul>
+				</div>
+				<script type="text/javascript" src="__PUBLIC__/js/bootstrap-dropdown.js"></script>
+					<script type="text/javascript">
+				        $(document).ready(function () {
+				            $('.dropdown-toggle').dropdown();
+				        });
+				</script>
+			</div>
+		</div>
+		
+		<div class="container">
+		<div class="table-responsive">
+		<table class="bordered-table zebra-striped">
+		    <caption>基本指标</caption>
+		    <thead>
+		        <tr>
+		            <th>区县</th>
+			        <th>年份</th>
+			        <th>总人口</th>
+			        <th>农业人口</th>
+			        <th>耕地面积</th>
+			        <th>水田面积</th>
+			        <th>总播种面积</th>
+			        <th>区域面积</th>
+					<th>早稻播种面积</th>
+					<th>早稻受灾面积</th>
+					<th>早稻产量</th>
+					<th>早稻市场价格</th>
+					<th>早稻收购价格</th>
+					<th>早稻化肥价格</th>
+					<th>晚稻播种面积</th>
+					<th>晚稻受灾面积</th>
+					<th>晚稻产量</th>
+					<th>晚稻市场价格</th>
+					<th>晚稻收购价格</th>
+					<th>晚稻化肥价格</th>
+		     	</tr>
+		   </thead>
+		   <tbody>
+		   		<tr>
+			        <td><?php echo $value['dist_name']?></td>
+			        <td><?php echo $value['year']?></td>
+			        <td><?php echo $value['population']?></td>
+			        <td><?php echo $value['agri_population']?></td>
+			        <td><?php echo $value['agri_area']?></td>
+			        <td><?php echo $value['field_area']?></td>
+			        <td><?php echo $value['total_sown_area']?></td> 
+			        <td><?php echo $value['zone_area']?></td>
+			        <td><?php echo $value['e_sown_area']?></td>
+			        <td><?php echo $value['e_disaster_area']?></td>
+			        <td><?php echo $value['e_production']?></td>
+			        <td><?php echo $value['e_market_price']?></td>
+			        <td><?php echo $value['e_purchase_price']?></td> 
+			        <td><?php echo $value['e_fertilizer_price']?></td>
+			        <td><?php echo $value['l_sown_area']?></td>
+			        <td><?php echo $value['l_disaster_area']?></td>
+			        <td><?php echo $value['l_production']?></td>
+			        <td><?php echo $value['l_market_price']?></td>
+			        <td><?php echo $value['l_purchase_price']?></td>
+			        <td><?php echo $value['l_fertilizer_price']?></td>    	
+		      	</tr>
+		   	</tbody>
+		</table>
+		</div>
+		</div>
+
+		<div class="table-responsive">
+		<table class="table table-bordered">
+		    <caption>早稻计算指标</caption>
+		    <thead>
+		        <tr>
+					<th>早稻亩产水平</th>
+					<th>早稻播种结构</th>
+					<th>早稻面积受灾率</th>
+					<th>早稻应该产量</th>
+					<th>早稻实际产量</th>
+					<th>早稻产量受灾率</th>
+					<th>早稻播种面积潜力产量</th>
+					<th>早稻稻肥比价</th>
+					<th>早稻亩产潜力产量</th>
+					<th>早稻价格波动</th>
+					<th>早稻产量波动</th>
+					<th>早稻面积波动</th>
+					<th>早稻亩产波动</th>
+				</tr>
+		   </thead>
+		   <tbody>
+		   		<tr>
+			        <td><?php echo $value['ae_yield_permu']?></td>
+			        <td><?php echo $value['ae_planting_stru']?></td>
+			        <td><?php echo $value['ae_area_disasterr']?></td>
+			        <td><?php echo $value['ae_suppose_yield']?></td>
+			        <td><?php echo $value['ae_actual_yield']?></td>
+			        <td><?php echo $value['ae_yield_disasterr']?></td> 
+			        <td><?php echo $value['ae_potential_yield_sownaera']?></td>
+			        <td><?php echo $value['ae_rice_fertilizer']?></td>
+			        <td><?php echo $value['ae_potential_yield_permu']?></td>
+			        <td><?php echo $value['we_price_fluctuation']?></td>
+			        <td><?php echo $value['we_yield_fluctuation']?></td>
+			        <td><?php echo $value['we_area_fluctuation']?></td> 	
+			        <td><?php echo $value['we_yield_permu_fluctuation']?></td> 
+		      	</tr>
+		   	</tbody>
+		</table>
+		</div>
+
+
+
+		<div class="table-responsive">
+		<table class="table table-bordered">
+		    <caption>晚稻计算指标</caption>
+		    <thead>
+		        <tr>
+					<th>晚稻亩产水平</th>
+					<th>晚稻播种结构</th>
+					<th>晚稻面积受灾率</th>
+					<th>晚稻应该产量</th>
+					<th>晚稻实际产量</th>
+					<th>晚稻产量受灾率</th>
+					<th>晚稻播种面积潜力产</th>
+					<th>晚稻稻肥比价</th>
+					<th>晚稻亩产潜力产量</th>
+					<th>晚稻价格波动</th>
+					<th>晚稻产量波动</th>
+					<th>晚稻面积波动</th>
+					<th>晚稻亩产波动</th>
+				</tr>
+		   </thead>
+		   <tbody>
+		   		<tr>
+			        <td><?php echo $value['al_yield_permu']?></td>
+			        <td><?php echo $value['al_planting_stru']?></td>
+			        <td><?php echo $value['al_area_disasterr']?></td>
+			        <td><?php echo $value['al_suppose_yield']?></td>
+			        <td><?php echo $value['al_actual_yield']?></td>
+			        <td><?php echo $value['al_yield_disasterr']?></td> 
+			        <td><?php echo $value['al_potential_yield_sownaera']?></td>
+			        <td><?php echo $value['al_rice_fertilizer']?></td>
+			        <td><?php echo $value['al_potential_yield_permu']?></td>
+			        <td><?php echo $value['wl_price_fluctuation']?></td>
+			        <td><?php echo $value['wl_yield_fluctuation']?></td>
+			        <td><?php echo $value['wl_area_fluctuation']?></td> 	
+			        <td><?php echo $value['wl_yield_permu_fluctuation']?></td>   	
+		      	</tr>
+		   	</tbody>
+		</table>
+		</div>
+
+
+		<div class="table-responsive">
+		<table class="table table-bordered">
+		    <caption>年水稻计算指标</caption>
+		    <thead>
+		        <tr>
+					<th>年水稻平均亩产水平</th>
+					<th>年水稻平均播种结构</th>
+					<th>年水稻平均面积受灾率</th>
+					<th>年水稻平均应该产量</th>
+					<th>年水稻平均实际产量</th>
+					<th>年水稻平均产量受灾率</th>
+					<th>年水稻产量播种面积潜力产量</th>
+					<th>年水稻平均亩产潜力产量</th>
+					<th>年水稻平均稻肥价比</th>
+
+					<th>年平均价格波动</th>
+					<th>年平均产量波动</th>
+					<th>年平均面积波动</th>
+					<th>年平均亩产波动</th>
+				</tr>
+		   </thead>
+		   <tbody>
+		   		<tr>
+			        <td><?php echo $value['ay_yield_permu']?></td>
+			        <td><?php echo $value['ay_planting_stru']?></td>
+			        <td><?php echo $value['ay_area_disasterr']?></td>
+			        <td><?php echo $value['ay_suppose_yield']?></td>
+			        <td><?php echo $value['ay_actual_yield']?></td>
+			        <td><?php echo $value['ay_yield_disasterr']?></td> 
+			        <td><?php echo $value['ay_potential_yield_sownaera']?></td>
+			        <td><?php echo $value['ay_rice_fertilizer']?></td>
+			        <td><?php echo $value['ay_potential_yield_permu']?></td>
+			        <td><?php echo $value['wy_price_fluctuation']?></td>
+			        <td><?php echo $value['wy_yield_fluctuation']?></td>
+			        <td><?php echo $value['wy_area_fluctuation']?></td> 	
+			        <td><?php echo $value['wy_yield_permu_fluctuation']?></td>   	
+		      	</tr>  	
+		      	</tr>
+		   	</tbody>
+		</table>
+		</div>
+
+	</body>
+</html>		

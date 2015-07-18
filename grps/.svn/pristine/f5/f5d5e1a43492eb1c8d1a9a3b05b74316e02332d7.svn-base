@@ -1,0 +1,84 @@
+<?php
+//管理员的Model
+//作者：刘建安
+//时间：2014/10/18
+namespace Admin\Model;
+use Model\City\InfoDistrictModel;
+use Model;
+use Think;
+
+class InfoUserModel extends Model\User\InfoUserModel{      
+
+      /* 添加新用户 
+      $data = array{
+		$user_name,
+		$user_pw,
+		$user_repw,
+		$user_region,
+		$user_email,
+		$user_phone,
+		$user_address,
+	}
+      */
+      public function addUser($data){
+      	if ($this->create($data)){		
+	      	$uid = $this->add(); 
+			if ($uid ){
+				return true;	
+			}
+			else{
+				$this->error = "添加失败！";
+				return false;
+			}	
+      	}
+      	else{  //添加失败
+      		return false;	
+      	}
+      }
+      
+      /* 删除用户，但不能删除管理员本人 */
+      public function deleteUser($user_id){
+      	$myId = session("user_id");  //当前用户id
+      	if ($user_id == $myId){
+      		$this->error = "不能删除管理员！";
+      		return false;	//不能删除当前用户
+      	} else{    			
+      		$uid = $this->where("user_id = '$user_id'")->delete();    			   						
+			if ($uid){
+				return true;	
+			}
+			else{
+				$this->error = "删除失败！";
+				return false;	
+			}
+      	}
+      }
+      
+      /* 修改用户信息
+	$data = array{
+		$user_name,
+		$user_region,
+		$user_email,
+		$user_phone,
+		$user_address,
+		$user_id
+	}
+	*/
+      public function updateUserInfo($data){
+      	if ($this->create($data)){ 			
+      	     $user_id = $data["user_id"];
+      		$uid = $this->where("user_id = '$user_id'")->save($data);
+      		if ($uid){
+      			return true;	 //修改成功
+      		}
+      		else{
+      			$this->error = "修改失败，发生未知错误";
+      			return false;
+      		}
+      	}
+      	else{
+      		return false;  //修改失败
+      	}  
+      }  
+}
+?>

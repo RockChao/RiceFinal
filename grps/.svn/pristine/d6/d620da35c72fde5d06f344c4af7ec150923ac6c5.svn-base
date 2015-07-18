@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<title>广东省市县稻谷预警系统</title>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css"/>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=sz3vyauA5BRKbE0GNZ3wnGnX"></script>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery.js"></script>
+		<script type="text/javascript" src="__PUBLIC__/js/index.js"></script>
+
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo U('Index/index')?>">广东省市县稻谷预警系统</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li class="active">
+							<a href="<?php echo U('Index/index')?>"><i class="glyphicon glyphicon-home"></i> 首页</a>
+						</li>
+
+						<li class="dropdown" id="accountmenu">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> 信息员管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                            	<li><a href="<?php echo U('User/manageUser')?>"><i class="glyphicon glyphicon-search"></i> 信息员查看</a></li>
+                        	</ul>
+                    	</li>
+
+                    	<li class="dropdown" id="accountmenu">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> 用户管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                           		<li><a href="<?php echo U('Guest/addGuest')?>"><i class="glyphicon glyphicon-plus"></i> 用户新增</a></li>
+                            	<li><a href="<?php echo U('Guest/manageGuest')?>"><i class="glyphicon glyphicon-search"></i> 用户查看</a></li>
+                        	</ul>
+                    	</li>
+                    	
+						<li>
+							<li class="dropdown" id="accountmenu">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-list"></i> 水稻管理<b class="caret"></b></a>
+                        		<ul class="dropdown-menu">
+                           			<li><a href="<?php echo U('Rice/uncheckRice')?>"><i class="glyphicon glyphicon-ok"></i> 水稻审核</a></li>
+                            		<li><a href="<?php echo U('Rice/manageRice')?>"><i class="glyphicon glyphicon-eye-open"></i> 水稻查看</a></li> 
+                        		</ul>
+                    		</li>
+
+                    	<li>
+							<li class="dropdown" id="accountmenu">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-list"></i> 灾情管理<b class="caret"></b></a>
+                        		<ul class="dropdown-menu">
+                           			<li><a href="<?php echo U('Disaster/uncheckDisaster')?>"><i class="glyphicon glyphicon-ok"></i> 灾情审核</a></li>
+                            		<li><a href="<?php echo U('Disaster/manageDisaster')?>"><i class="glyphicon glyphicon-eye-open"></i> 灾情查看</a></li> 
+                        		</ul>
+                    		</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a><?php echo session("user_name");?></a>
+						</li>
+
+						<li>
+							<a href="<?php echo U('User/logout')?>" class="logout"><i class="glyphicon glyphicon-off"></i> 注销</a>
+						</li>
+					</ul>
+
+					
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<?php foreach ($citylist as $key => $value): ?>
+							<li class="active">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+									
+									<?php  echo $value['dist_name'];?>
+									<b class="caret"></b>
+								</a>
+
+							<ul class="dropdown-menu pull-right">
+								<?php foreach ($distlist as $key1 => $v): 
+									
+								?>
+								<?php if ($v['dist_belongto'] == $value['dist_id']) {?>
+									<li><a href="__URL__/../Index/show?lati=<?php echo $v['dist_latitude']?>&long=<?php echo $v['dist_longitude']?>"><?php echo $v['dist_name'];?></a></li>
+								<?php } ?>
+									
+								<?php endforeach; ?>
+	                		</ul>
+                		</li>
+						<?php endforeach; ?>
+					</ul>
+
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="allmap">
+				</div>
+				<include file="show" /> 
+
+				<script type="text/javascript" src="__PUBLIC__/js/bootstrap-dropdown.js"></script>
+					<script type="text/javascript">
+				        $(document).ready(function () {
+				            $('.dropdown-toggle').dropdown();
+				        });
+				   </script>
+			</div>
+		</div>
+	</body>
+</html>

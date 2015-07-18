@@ -1,0 +1,100 @@
+<?php
+//作者：刘建安
+//时间：2014/11/8
+namespace Guest\Controller;
+use Think\Controller;
+
+class RiceController extends GuestController{
+	public function index(){
+			
+	}
+	
+	public function manageRice(){
+			$rice = M("InfoRice");
+			$ricedata = $rice->where("rice_status=1")->select();   //得到水稻信息
+			foreach($ricedata as  &$value){
+					$dist_id = $value['dist_id'];
+					$dist_name = getDistrictNameByID($dist_id);
+					$value['dist_name'] = $dist_name;   //将地区ID换成地区名
+					//显示审核状态
+					$value['rice_status'] = getRiceStatus($value['rice_status']);
+			}
+			$this->assign("ricedata",$ricedata);
+			$this->display();	
+	}
+	
+	/*
+	根据地区和年份来查询水稻
+	@param post: 
+	rice_region text,
+	year int
+	*/
+	/*
+	public function searchRice(){
+
+			$dist = M("InfoDistrict");
+	    	$distlist = $dist->field('dist_id, dist_name,dist_belongto')->select();
+	    	$citylist =  array();
+	    	foreach($distlist as $key => $value){
+	    	if ($value["dist_id"] == $value["dist_belongto"]){
+	    			array_push($citylist, $value);
+	    			
+	    		}	
+	    	}
+	    	$years = M("InfoRice")->distinct(true)->field("year")->select();
+	    	$this->assign("distlist", $distlist);
+	    	$this->assign("citylist", $citylist);
+	    	$this->assign("years", $years);
+			if( IS_POST){
+				$rice_region = I('rice_region');
+				$year = I("year");
+
+				$rice = M("InfoRice");
+				$dist_id = $rice_region;
+				$ricedata = array();
+
+				if ($rice_region == "" && $year != ""){  //只有年份
+					$ricedata1 = $rice->where("year='$year'")->select();	
+					foreach($ricedata1 as $key => $value){
+						$value["dist_name"] = getDistrictNameById($value['dist_id']);
+						$value["rice_status"] = getRiceStatus($value["rice_status"]);
+						array_push($ricedata, $value);
+					}		
+				}
+				else if ($rice_region != "" && $year == ""){  //只有地区			
+					$ricedata1 = $rice->where("dist_id='$dist_id'")->select();		
+					foreach($ricedata1 as $key => $value){
+						$value["dist_name"] = getDistrictNameById($value['dist_id']);
+						$value["rice_status"] = getRiceStatus($value["rice_status"]);
+						array_push($ricedata, $value);
+					}		
+				}
+				else if ($rice_region != "" && $year != ""){  //年份和地区都不为空
+					$ricedata1 = $rice->where("dist_id='$dist_id' and year='$year'")->find();	
+					$ricedata1["dist_name"] = getDistrictNameById($ricedata1['dist_id']);
+					$ricedata1["rice_status"] = getRiceStatus($ricedata1["rice_status"]);
+					array_push($ricedata, $ricedata1);
+				}	
+		
+				$this->assign("ricedata", $ricedata);		
+				$this->display();			
+			}
+			else{
+	    		$this->display();   		
+	    		
+			}
+	}
+	*/
+	
+	/*   列出一项水稻的所有信息 */
+	public function detailRice(){
+		/*
+		$rice_id = I("rice_id");
+		$rice = M("InfoRice");
+		$ricedata = $rice->where("rice_id='$rice_id'")->find();
+		$ricedata["dist_name"] = getDistrictNameById($ricedata["dist_id"]);
+		$this->assign("value", $ricedata);
+		$this->display();	
+		*/
+	}
+}

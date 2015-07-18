@@ -1,0 +1,33 @@
+<?php
+//作者：刘建安
+//时间：2014/11/8
+namespace Guest\Controller;
+use Think\Controller;
+
+class GuestController extends UserController{
+	public function index(){
+		if (!isset($_SESSION['user_name'])){
+			$this->redirect("Index/index",array('cate_id' => 2), 1, "请先登录！");	
+		}
+	}
+	
+	/*  用户注销 */
+	public function logout(){
+		$user = D("InfoUser");
+		$user->logout();
+		 $this->redirect('Home/User/login');
+	}
+	
+	public function showInfo(){
+		$user = D("InfoUser");
+		$user_id = session('user_id');
+		$data = $user->getInfo($user_id);
+		if($data == false)
+			$this->error($user->error);
+		else{
+			$this->assign("userdata", $data);
+			$this->display();
+		}
+	}
+}
+?>

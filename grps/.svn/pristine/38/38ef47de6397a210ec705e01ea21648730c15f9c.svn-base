@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<title>广东省市县稻谷预警系统</title>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/media/bootstrap.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/media/DT_bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css"/>
+
+		<script type="text/javascript" src="__PUBLIC__/media/js/jquery.js"></script>
+		<script type="text/javascript" src="__PUBLIC__/media/js/jquery.dataTables.js"></script>
+	 	<script type="text/javascript" src="__PUBLIC__/media/js/demo.js"></script>
+
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo U('Index/index')?>">广东省市县稻谷预警系统</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li>
+							<a href="<?php echo U('Index/index')?>">首页</a>
+						</li>
+						<li class="dropdown">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">用户管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                        		<li><a href="<?php echo U('User/addUser')?>">用户新增</a></li>
+                            	<li><a href="<?php echo U('User/manageUser')?>">用户查看</a></li>
+                        	</ul>
+                    	</li>
+						
+						<li>
+							 <li role="dropdown" class="active">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">水稻管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                           		<li><a href="#">水稻审核</a></li>
+                            	<li><a href="<?php echo U('Rice/manageRice')?>">水稻查看</a></li>
+                        	</ul>
+                    	</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a><?php echo session("user_name");?></a>
+						</li>
+
+						<li>
+							<a href="<?php echo U('User/logout')?>" class="logout">注销</a>
+						</li>
+					</ul>
+				</div>
+				<script type="text/javascript" src="__PUBLIC__/js/bootstrap-dropdown.js"></script>
+					<script type="text/javascript">
+				        $(document).ready(function () {
+				            $('.dropdown-toggle').dropdown();
+				        });
+				</script>
+			</div>
+		</div>
+		<br><br><br>
+		<div class="container">
+		<table class="bordered-table zebra-striped" id="example">
+		    <caption>待审核水稻信息</caption>
+		    <thead>
+		        <tr> 
+		            <th>区县</th>
+			        <th>年份</th>
+			        <th>总人口</th>
+			        <th>农业人口</th>
+			        <th>耕地面积</th>
+			        <th>水田面积</th>
+			        <th>操作</th>
+		     	</tr>
+		   </thead>
+		   
+		   <tbody>
+		      	<?php foreach ($ricedata as $key => $value): ?>
+		   			<tr>
+			        	<td><?php echo $value['dist_name']?></td>
+			         	<td><?php echo $value['year']?></td>
+			         	<td><?php echo $value['population']?></td>
+			         	<td><?php echo $value['agri_population']?></td>
+			         	<td><?php echo $value['agri_area']?></td>
+			         	<td><?php echo $value['field_area']?></td>
+			         	<td>	
+			         		<a href="__URL__/../Rice/checkRice?rice_id=<?php  echo $value['rice_id']; ?>" class="btn btn-primary" role="button">审核</a>
+			         	</td>
+		      		</tr>
+		   		<?php endforeach;?>
+		   	</tbody>
+		</table>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,69 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <link rel="shortcut icon" href="http://www.sysu.edu.cn/2012/images/logo.jpg">
+	    <title>水稻管理系统</title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="">
+	    <meta name="author" content="">	
+		<link rel="stylesheet" href="__PUBLIC__/css/styles.css">
+		<link rel="stylesheet" href="__PUBLIC__/css/login.css">
+    	<script type="text/javascript" src="__PUBLIC__/Js/login.js"></script>
+		<style type="text/css">
+			img, div { behavior: url(iepngfix.htc) }
+			#logo_img{
+				width: 559px;
+				height: 45px;
+				margin-left: -20px;
+				margin-top: -10px;
+			}
+			body#login #content {
+    			width: 410px;
+			}
+		</style>
+	</head>
+	<body id="login">
+		<div id="wrappertop"></div>
+			<div id="wrapper">
+				<div id="content">
+					<div id="header">
+						<div class="loginTitle">水稻预警管理系统</div>						
+					</div>
+					<div id="darkbanner" class="banner320">
+						<h2>Login</h2>
+					</div>
+					<div id="darkbannerwrap">
+					</div>
+						<fieldset class="form">
+							<form action = "__SELF__", method = "post">
+
+                        	<p>
+                        		<p>用户名：</p>
+								<input type = "text" name = "user_name">
+							</p>
+							<p>
+								<p>密码：</p>
+								<input type = "password" name = "user_pw">
+
+							</p>
+							
+							<input type="submit" id="sub" value="登陆"/>
+
+							</form>
+        				</fieldset>									
+				</div>
+			</div>   
+			<div id="wrapperbottom_branding">
+				<div id="wrapperbottom_branding_text">
+					<p id = "power">
+						Copyright © 2014 by 7 GUN.<br>
+							All Rights Reserved.<br>
+						     Powered by 7 GUN.
+					</p>
+				</div>
+			</div>
+		</div>
+		<include file="bottom" />
+	</body>
+</html>

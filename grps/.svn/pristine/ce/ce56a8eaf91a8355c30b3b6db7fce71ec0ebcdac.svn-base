@@ -1,0 +1,26 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Home\Model;
+use Model\Disater\InfoDisaterModel;
+use Model;
+use Think;
+
+class InfoDisaterModel extends  Model\Disater\InfoDisaterModel {
+	/*  添加灾难信息 */
+	public function addDisater($data){
+		if ($this->create($data)){
+			$did = $this->add($data);
+			if ($did){
+				return true;	
+			}
+			else{  //添加灾难信息失败
+				$this->error = "添加失败！";
+				return false;	
+			}
+		}
+		else{  //添加灾难信息失败
+			return false;
+		}
+	}
+}

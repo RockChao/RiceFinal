@@ -1,0 +1,96 @@
+<?php
+
+//Author:Baolei
+//Date: 2014/10/18
+//修改：刘建安
+//时间：2014/10/18
+namespace Model\User;
+use Think\Model;
+
+abstract class InfoUserModel extends Model{
+ 	protected $connection = IU_DB_DSN;
+
+ 	//用户模型自动验证
+ 	protected $_validate = array(
+ 		/* 验证用户名 */
+ 		array('user_name','require',"用户名必须提供"),  //用户名必须存在
+ 		array('user_name','',"该用户名已存在",self::EXISTS_VALIDATE,'unique'),//用户名已存在
+ 		array('user_name','1,20',"用户名长度必须为1到20个字符",self::EXISTS_VALIDATE,'length'),//用户名长度不合法,
+ 		
+ 	
+ 		/* 验证密码 */
+ 		array('user_pw','require',"密码必须提供"),
+ 		array('user_pw','6,16',"密码长度必须为6~16位",self::EXISTS_VALIDATE,'length'),  //密码长度必须为6~16
+ 		array('user_repw','user_pw',"确认密码不相同",0,'confirm'),  //确认密码相同
+
+		/* 验证邮箱 */
+		array('user_email','require',"邮箱必须提供"),
+		array('user_email','',"该邮箱已被占用",self::EXISTS_VALIDATE,'unique'),
+ 		array('user_email','email',"邮箱格式不正确",self::EXISTS_VALIDATE),//邮箱格式
+ 		array('user_email','1,50',"邮箱长度必须为1~50个字符",self::EXISTS_VALIDATE,'length'),
+ 		
+ 		
+
+ 		/* 验证手机号码 */
+ 		//array('user_phone',array(131,136),-7,self::EXISTS_VALIDATE,'in'),
+ 		array('user_phone','require',"手机号必须提供"),
+ 		array('user_phone','',"该手机号已被占用",self::EXISTS_VALIDATE,'unique'),
+ 		array('user_phone','1,11',"手机号长度必须为1~11位",self::EXISTS_VALIDATE,'length'),
+ 		
+ 		
+ 		
+		/*  验证该地区是否存在用户 */
+		array('user_region','require',"区县必须提供！"),
+		array('user_region','',"该地区已经存在用户",self::EXISTS_VALIDATE,'unique'),
+		
+ 		/*验证用户级别*/
+ 		//array('user_level',array(1,2),-11,self::EXISTS_VALIDATE,'in'),
+
+ 	);
+ 	//自动将用户级别设为2（普通用户）
+ 	 protected $_auto  = array(
+      		array("user_level", 2),
+      );
+
+ 		/*
+		用户登录
+		@param arary $data = array{
+			$user_name,
+			$user_pw
+		}
+		return 1 登录成功，-2 密码错误， -1 用户名不存在
+	*/
+	public function login($data){
+		$user_name = $data["user_name"];
+		$user_pw = $data["user_pw"];
+	
+		$result = $this->where("user_name='$user_name'")->find();
+		if (is_array($result)){
+				if ($result["user_pw"] == $user_pw){
+					session('user_name', $result['user_name']);
+					session("user_id", $result["user_id"]);
+					session("user_level", $result["user_level"]);
+					return true;	  //登录成功
+				}
+				else{
+					$this->error = "密码不正确！";
+					return  false;	//密码不正确
+				}
+		}
+		else{
+			$this->error = "用户名不存在！";
+			return false;	   //用户名不存在
+		}	
+	}
+	
+	/* 用户注销 */
+	public function logout(){
+		 session('user_id', null);
+		 session('user_name',null);
+		 session('user_level',null);
+	}
+	
+	//该抽象方法用于修改用户信息
+ 	abstract public function updateUserInfo($data);
+ }
+ ?>

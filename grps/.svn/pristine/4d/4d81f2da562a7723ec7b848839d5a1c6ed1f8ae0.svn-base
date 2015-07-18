@@ -1,0 +1,13 @@
+<?php
+//作者：刘建安
+//时间：2014/11/8
+namespace Guest\Controller;
+use Think\Controller;
+
+class GuestController extends Controller{
+	public function _initialize(){
+		if (isLogin() == 0 || session("user_level") != 3){
+				$this->redirect( U("User/login"), array('cate_id' => 3), 2, "请先登录！");
+		}	
+	}
+}

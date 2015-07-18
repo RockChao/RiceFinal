@@ -1,0 +1,53 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Admin\Model;
+use Think\Model;
+class InfoDisaterModel extends Model{
+	protected $_validate = array(
+		array("disa_dist", 'require', "受灾地区不为空"),
+		array("disa_date", 'require', "受灾日期不为空"),
+		array("disa_situ", 'require', "灾情不为空"),
+		array("disa_area", 'require', "受灾面积不为空"),
+		array("disa_eloss", 'require', "经济损失不为空"),
+		
+		array("disa_area", '/^[0-9]*\.{0,2}$/u','受灾面积为最多有两位小数的实数',self::EXISTS_VALIDATE,'regex'),
+		array("disa_eloss", '/^[0-9]*\.{0,2}$/u','经济损失为最多有两位小数的实数',self::EXISTS_VALIDATE,'regex')
+	);
+	public function addDisater($data){
+		if ($this->create($data)){
+			$did = $this->add($data);
+			if ($did){
+				return true;	
+			}
+			else{  //添加灾难信息失败
+				$this->error = "添加失败！";
+				return false;	
+			}
+		}
+		else{  //添加灾难信息失败
+			return false;
+		}
+	}
+	
+	/*  审核水稻信息 
+	@param $did
+	return bool
+	已通过为1，不通过为0，审核中为2
+	*/
+	public function checkDisater($did, $failed){
+		$this->where("id='$did'")->find();
+		if ($falied){  //不通过审核
+			$data["disa_status"] = 0;
+		}
+		else{  //通过审核
+			$data["disa_status"] = 1;
+		}
+		if ($this->save($data)){  //写入数据库
+				return true;
+		}
+		else{
+			return false;
+		}
+	}
+}

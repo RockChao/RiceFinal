@@ -1,0 +1,138 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<title>广东省市县稻谷预警系统</title>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css"/>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery-1.7.2.min.js"></script>
+			<script type="text/javascript" >
+			function ChangeSelect(city_id){
+				var obj = document.getElementById("user_region");
+				obj.options.length = 0;
+				<?php foreach($distlist as $key => $value ): ?>
+				if (city_id == <?php  echo $value['dist_belongto']; ?>){
+					t =" <?php  echo $value['dist_name']; ?> ";
+				    v = "<?php  echo $value['dist_id']; ?>";		  
+					obj.options.add(new Option(t,v));				
+				}
+				<?php  endforeach; ?>		
+			}
+			</script>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo U('Index/index')?>">广东省市县稻谷预警系统</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li>
+							<a href="<?php echo U('Index/index')?>">首页</a>
+						</li>
+						<li role="dropdown" class="active">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">用户管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                        		<li><a href="#">用户新增</a></li>
+                            	<li><a href="<?php echo U('User/manageUser')?>">用户查看</a></li>
+                        	</ul>
+                    	</li>
+						
+						<li>
+							 <li class="dropdown">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">水稻管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                           		<li><a href="<?php echo U('Rice/uncheckRice')?>">水稻审核</a></li>
+                            	<li><a href="<?php echo U('Rice/manageRice')?>">水稻查看</a></li>
+                        	</ul>
+                    	</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a><?php echo session("user_name");?></a>
+						</li>
+
+						<li>
+							<a href="<?php echo U('User/logout')?>" class="logout">注销</a>
+						</li>
+					</ul>
+				</div>
+				<script type="text/javascript" src="__PUBLIC__/js/bootstrap-dropdown.js"></script>
+					<script type="text/javascript">
+				        $(document).ready(function () {
+				            $('.dropdown-toggle').dropdown();
+				        });
+				</script>
+			</div>
+		</div>
+		<div class="add">
+			<form action="__URL__/../User/addUser" method = "post" class="form-horizontal" role="form" id="user" name="user">
+			   	<div class="form-group">
+			      	<label for="username" class="col-sm-2 control-label">用户名：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="user_name" 
+			            	placeholder="请输入用户名">
+			      	</div>
+			   	</div>
+			  	<div class="form-group">
+			      	<label for="password" class="col-sm-2 control-label">密码：</label>
+			      	<div class="col-sm-3">
+			         	<input type="password" class="form-control" name="user_pw" 
+			            	placeholder="请输入密码">
+			      	</div>
+			   	</div>
+			   	<div class="form-group">
+			      	<label for="password" class="col-sm-2 control-label">确认密码：</label>
+			      	<div class="col-sm-3">
+			         	<input type="password" class="form-control" name="user_repw" 
+			            	placeholder="请确认密码">
+			      	</div>
+			   	</div>
+			   	<div class="form-group">
+			      	<label for="region" class="col-sm-2 control-label">区县：</label>
+			      	<div class="col-sm-3">
+			      		
+			      		<select  onChange="ChangeSelect(this.value);">
+			      			<option selected>城市</option>     			
+			         	<?php   foreach($citylist as $key => $value): ?>         	
+			         			<option  value="<?php  echo $value['dist_id']; ?>"><?php  echo $value['dist_name'];  ?></option>		         			
+			         	<?php  endforeach; ?>
+			         	</select>
+			         	
+			         	<select name="user_region" id="user_region" >
+			         		<option  selected>区县</option>
+			         	</select>
+			         	
+			      	</div>
+			   	</div>
+			   	<div class="form-group">
+			      	<label for="phone" class="col-sm-2 control-label">电话：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="user_phone" 
+			            	placeholder="请输入电话">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="email" class="col-sm-2 control-label">邮件：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="user_email" 
+			            	placeholder="请输入邮件">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="address" class="col-sm-2 control-label">地址：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="user_address" 
+			            	placeholder="请输入地址">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<div class="col-sm-offset-2 col-sm-10">
+			         	<button type="submit" class="btn btn-primary">添加</button>
+			     	</div>
+			   	</div>
+			</form>
+		</div>
+	</body>
+</html>		

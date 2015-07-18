@@ -1,0 +1,30 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Admin\Model;
+use Model\Disater\InfoDisaterModel;
+use Model;
+use Think;
+
+class InfoDisasterModel extends  Model\Disater\InfoDisaterModel {
+	/*  审核水稻信息 
+	@param $did
+	return bool
+	已通过为1，不通过为0，审核中为2
+	*/
+	public function checkDisater($did, $failed){
+		$this->where("id='$did'")->find();
+		if ($falied){  //不通过审核
+			$data["disa_status"] = 0;
+		}
+		else{  //通过审核
+			$data["disa_status"] = 1;
+		}
+		if ($this->save($data)){  //写入数据库
+				return true;
+		}
+		else{
+			return false;
+		}
+	}
+}

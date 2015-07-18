@@ -1,0 +1,13 @@
+<?php
+//作者：刘建安
+//时间：2014/11/8
+
+namespace Admin\Controller;
+use Think\Controller;
+class AdminController extends Controller{
+	public function _initialize(){
+		if (isLogin() == 0 || session("user_level") != 1){
+			$this->error("无权访问！", U("Home/User/login"), 2);
+		}
+	}
+}

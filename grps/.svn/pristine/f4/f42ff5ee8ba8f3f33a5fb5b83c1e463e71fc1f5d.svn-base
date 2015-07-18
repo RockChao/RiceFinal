@@ -1,0 +1,17 @@
+<?php
+//作者：刘建安
+//时间：2014/11/14
+namespace Admin\Controller;
+
+class GuestController extends AdminController{
+	//显示所有访客的信息
+	public function manageGuest (){
+			$guest  = M("InfoUser");
+			$guestdata = $guest->where("user_level=3")->select();
+			foreach($guestdata as &$value){
+				$value["user_region"] = getDistrictNameById($value["user_region"]);
+			}
+			$this->assign("userdata", $guestdata);
+			$this->display();
+		}
+}

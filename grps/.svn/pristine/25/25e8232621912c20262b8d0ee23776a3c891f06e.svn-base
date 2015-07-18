@@ -1,0 +1,204 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<title>广东省市县稻谷预警系统</title>
+
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css"/>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery.js"></script>
+	</head>
+	<body>
+				<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo U('Index/index')?>">广东省市县稻谷预警系统</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li>
+							<a href="<?php echo U('Index/index')?>">首页</a>
+						</li>
+						<li role="dropdown">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">用户管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                        		<li><a href="<?php echo U('User/addUser')?>">用户新增</a></li>
+                            	<li><a href="<?php echo U('User/manageUser')?>">用户查看</a></li>
+                        	</ul>
+                    	</li>
+						
+						<li >
+							 <li role="dropdown"  class="active">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">水稻管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                           		<li><a href="<?php echo U('Rice/uncheckRice')?>">水稻审核</a></li>
+                            	<li><a href="<?php echo U('Rice/manageRice')?>">水稻查看</a></li>
+                        	</ul>
+                    	</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a><?php echo session("user_name");?></a>
+						</li>
+
+						<li>
+							<a href="<?php echo U('User/logout')?>" class="logout">注销</a>
+						</li>
+					</ul>
+				</div>
+				<script type="text/javascript" src="__PUBLIC__/js/bootstrap-dropdown.js"></script>
+					<script type="text/javascript">
+				        $(document).ready(function () {
+				            $('.dropdown-toggle').dropdown();
+				        });
+				</script>
+			</div>
+		</div>
+		
+		<div class="add">
+			<form action="<?php echo U('Admin/Rice/updateRice'); ?>" method = "post" class="form-horizontal" role="form">
+			   	<div class="form-group">
+			      	<label for="username" class="col-sm-2 control-label">区县：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="rice_region" value="<?php echo $ricedata['rice_region'];?>" readonly>
+			      	</div>
+			   	</div>
+			  	<div class="form-group">
+			      	<label for="year" class="col-sm-2 control-label">年份：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="year"  value="<?php echo $ricedata['year'];?>">
+			      	</div>
+			   	</div>
+			   	
+			   	<div class="form-group">
+			      	<label for="password" class="col-sm-2 control-label">总人口：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="population" value="<?php echo $ricedata['population'];?>">
+			      	</div>
+			   	</div>
+			   	<div class="form-group">
+			      	<label for="agri_population" class="col-sm-2 control-label">农业人口：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="agri_population"  value="<?php echo $ricedata['agri_population'];?>">
+			      	</div>
+			   	</div>
+			   	<div class="form-group">
+			      	<label for="zone_area" class="col-sm-2 control-label"> 地区总面积： </label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="zone_area"  value="<?php echo $ricedata['zone_area'];?>">
+			      	</div>
+			   	</div>
+			   	<div class="form-group">
+			      	<label for="agri_area" class="col-sm-2 control-label">耕地面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="agri_area"  value="<?php echo $ricedata['agri_area'];?>">
+			      	</div>
+			   	</div>
+			   	<div class="form-group">
+			      	<label for="field_area" class="col-sm-2 control-label">水稻种植面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="field_area"  value="<?php echo $ricedata['field_area'];?>">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="total_sown_area" class="col-sm-2 control-label">总播种面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="total_sown_area"  value="<?php echo $ricedata['total_sown_area'];?>">
+			      	</div>
+			    </div>
+			    <b>早稻：</b><br/>
+			    <div class="form-group">
+			      	<label for="e_sown_area" class="col-sm-2 control-label">早稻播种面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="e_sown_area"  value="<?php echo $ricedata['e_sown_area'];?>">
+			      	</div>
+			    </div>
+			    
+			    <div class="form-group">
+			      	<label for="e_disaster_area" class="col-sm-2 control-label">早稻受灾面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="e_disaster_area"  value="<?php echo $ricedata['e_disaster_area'];?>">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="e_production" class="col-sm-2 control-label">早稻产量：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="e_production"  value="<?php echo $ricedata['e_production'];?>">
+			      	</div>
+			    </div>
+			     <div class="form-group">
+			      	<label for="e_market_price" class="col-sm-2 control-label">早稻市场价格：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="e_market_price"  value="<?php echo $ricedata['e_market_price'];?>">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="e_purchase_price" class="col-sm-2 control-label">早稻收购价格：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="e_purchase_price"  value="<?php echo $ricedata['e_purchase_price'];?>">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="e_fertilizer_price" class="col-sm-2 control-label">早稻肥料价格：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="e_fertilizer_price"  value="<?php echo $ricedata['e_fertilizer_price'];?>">
+			      	</div>
+			    </div>
+			   <b>晚稻：</b><br/>
+			    <div class="form-group">
+			      	<label for="l_sown_area" class="col-sm-2 control-label">晚稻播种面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="l_sown_area"  value="<?php echo $ricedata['l_sown_area'];?>">
+			      	</div>
+			    </div>
+			    
+			    <div class="form-group">
+			      	<label for="l_disaster_area" class="col-sm-2 control-label">晚稻受灾面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="l_disaster_area"  value="<?php echo $ricedata['l_disaster_area'];?>">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="l_production" class="col-sm-2 control-label">晚稻产量：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="l_production"   value="<?php echo $ricedata['l_production'];?>">
+			      	</div>
+			    </div>
+			     <div class="form-group">
+			      	<label for="l_market_price" class="col-sm-2 control-label">晚稻市场价格：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="l_market_price"   value="<?php echo $ricedata['l_market_price'];?>">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="l_purchase_price" class="col-sm-2 control-label">晚稻收购价格：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="l_purchase_price"    value="<?php echo $ricedata['l_purchase_price'];?>">
+			      	</div>
+			    </div>
+			    <div class="form-group">
+			      	<label for="l_fertilizer_price" class="col-sm-2 control-label">晚稻肥料价格：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="l_fertilizer_price"   value="<?php echo $ricedata['l_fertilizer_price'];?>">
+			      	</div>
+			    </div>
+			    
+			    <div class="form-group">
+			      	<label for="reason" class="col-sm-2 control-label">修改理由：</label>
+			      	<div class="col-sm-3">
+			         	<textarea class="form-control" name="reason" rows="4" cols="50"></textarea>
+			      	</div>
+			    </div>		    
+			    
+			    <input type="hidden" name="rice_id" value="<?php echo $ricedata['rice_id']; ?>">
+			  <div class="form-group">
+			      	<div class="col-sm-offset-2 col-sm-10">
+			         	<button type="submit" class="btn btn-primary">提交</button>
+			         	<a href="<?php echo U('Rice/manageRice'); ?>"<button  class="btn btn-primary">返回</button> </a>  
+			     	</div>
+			   	</div>
+			</form>
+		</div>
+	</body>
+</html>		

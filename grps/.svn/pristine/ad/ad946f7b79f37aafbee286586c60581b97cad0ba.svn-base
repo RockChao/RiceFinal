@@ -1,0 +1,158 @@
+<?php
+//作者：刘建安
+//修改时间：2014/10/19
+namespace Admin\Controller;
+use Think\Controller;
+
+class UserController extends Controller{
+	public function index(){
+		if (!isset($_SESSION['user_name'])){
+			$this->redirect("Index/index",array('cate_id' => 2), 1, "请先登录！");	
+		}
+	}
+	
+	/*
+		用户登录
+	*/	
+	public function login(){
+	    session("dist_latitude", 23.082389);
+	    session("dist_longitude", 113.313729);
+		$this->redirect(U("Admin/Index/index"),"",0);	
+	}
+	
+	/*  用户注销 */
+	public function logout(){
+		$user = D("InfoUser");
+		$user->logout();	
+		 $this->redirect('Home/User/login');
+	}
+	
+	
+	/*  显示管理用户的界面 */
+	public function manageUser(){
+		if (isLogin() != 0 && session('user_level') == 1){
+			$user = M("InfoUser");
+			$userdata = $user->where("user_level=2")->select();
+			foreach($userdata as &$value){
+				$value['user_region']= getDistrictNameById($value['user_region']);
+			}
+			$this->assign("userdata", $userdata);
+			$this->display();	
+		}
+		else{
+			$this->error("请先登录", U('Admin/User/login'));
+		}
+	}
+	
+	/*  添加新用户，判断信息是否合法
+	同一地区只能有一个用户
+	 */
+	public function addUser(){
+		if (isLogin() != 0 && session('user_level') == 1){
+				if (IS_POST){
+				/*
+				$verify = I("verify")
+				if (checkVeriy($verify)){
+					$this->error("验证码不正确");	
+				}	
+				*/
+				$data['user_name'] =  I("user_name");
+				$data['user_pw'] = I("user_pw");
+				$data['user_repw'] = I("user_repw");
+				$data['user_phone'] = I("user_phone");
+				$data['user_email'] = I("user_email");
+				$data['user_address'] = I("user_address");
+				$data['user_region'] = (int)I("user_region");
+				
+				if (preg_match("/\s/", $data['user_name'] ) || preg_match("/\s/", $data['user_pw'] )) {
+        			$this->error("用户名和密码中不能包含空格！");	
+				}
+	
+				if(empty($data['user_region']) && !$data['user_region']){
+					$this->error("区县必须提供！");	
+			   }
+				$user = D("InfoUser");
+				$uid = $user->addUser($data);
+				if ( $uid){					
+					$this->success("添加用户成功", U("manageUser"));
+					//$this->redirect("User/addUser", "",2, "添加用户成功");
+
+				}
+				else{
+					$error = $user->getError();
+					$this->redirect("User/addUser", "",2, $error);	
+				}
+			}	
+			else{
+				$dist = M("InfoDistrict");
+	    		$distlist = $dist->select();
+	    		$citylist =  array();
+	    		foreach($distlist as $key => $value){
+	    			if ($value["dist_id"] == $value["dist_belongto"]){
+	    				array_push($citylist, $value);
+	    			}	
+	    		}
+	    		$this->assign("distlist", $distlist);
+	    		$this->assign("citylist", $citylist);
+				$this->display();	
+			}
+		}
+		else{
+			$this->error("请先登录", U('Admin/User/login'));
+		}
+	}
+	
+	/*   删除用户 ,但不能删除管理员本人 */
+	public function deleteUser(){
+		if (isLogin() != 0 && session('user_level') == 1){
+			$user_id =(int)I("user_id");
+			$user = D('InfoUser');
+			$uid = $user->deleteUser($user_id);
+			if ($uid){
+				$this->success("删除用户成功！");	
+			}
+			else{
+				$this->error($user->getError());
+			}
+		}
+		else{
+			$this->error("请先登录", U('Admin/User/login'));
+		}
+	}
+	
+	/* 修改用户信息 */
+	public function updateInfo(){
+		if (isLogin() != 0 && session('user_level') == 1){
+			if (IS_POST){
+				$data["user_region"] = getDistrictIdByName(I("user_region"));
+				$data["user_name"] = I("user_name");
+				$data["user_pw"] = I("user_pw");
+				$data["user_phone"] = I("user_phone");
+				$data["user_email"] = I("user_email");
+				$data["user_address"] = I("user_address");
+				$data["user_id"] = I("user_id");
+				$user = D('InfoUser');
+				
+				$uid = $user->updateUserInfo($data);			
+				if ($uid > 0){
+					$this->success("修改成功！",U("manageUser"));
+				}
+				else{
+					$this->error($user->getError());
+				}
+			}
+			else{
+				$user_id = I("user_id");
+				$user = M("InfoUser");
+				$userinfo = $user->where("user_id='$user_id'")->find();
+				$userinfo['user_region'] = getDistrictNameById($userinfo['user_region']);
+				$this->assign("userinfo", $userinfo);
+				$this->display();	
+			}
+		}
+		else{
+			$this->error("请先登录", U('Admin/User/login'));
+		}
+	}
+}
+?>

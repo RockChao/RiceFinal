@@ -1,0 +1,23 @@
+<?php
+return array(
+	//'配置项'=>'配置值'
+	'URL_CASE_INSENSITIVE' => true,
+	'MA_DEBUG'=> false,
+	'DB_TYPE'=>'mysql',
+	'DB_HOST'=>'localhost',
+	'DB_NAME'=>'db_grps',
+	'DB_USER'=>'root',
+	'DB_PWD' =>'2014grps',
+	'DB_PORT'=>'3306',
+	'DB_CHARSET'=>'utf8',
+	'DB_FIELD_CACHE'=>false,
+	'URL_MODEL'=>0,
+	'VAR_FILTERS'=>'htmlspecialchars',
+	'MODULE_ALLOW_LIST'    =>    array(
+		'Admin',
+		'Home',
+		'User',
+		'Guest'),
+	//'DEFAULT_MODULE'        =>  'Home',
+	//'MULTI_MODULE'          =>  true,
+);

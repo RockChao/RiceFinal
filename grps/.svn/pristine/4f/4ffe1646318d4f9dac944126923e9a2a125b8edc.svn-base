@@ -1,0 +1,187 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Admin\Controller;
+
+class DisasterController extends AdminController{
+/*  显示所有灾难的简略信息 */
+	public function manageDisaster(){
+		$disater = M("InfoDisaster");
+		$data = $disater->select();
+		foreach($data as &$value){
+			$value["disa_dist"] = getDistrictNameById($value["disa_dist"]);
+			$value["disa_situ"] = getDisaSituById($value["disa_situ"]);
+			$value["disa_status_id"] = $value["disa_status"];
+			$value["disa_status"] = getDisasterStatus($value["disa_status"]);
+			$value["disa_begindate"] = date("Y-m-d", strtotime($value["disa_begindate"]));
+			$value["disa_enddate"] = date("Y-m-d", strtotime($value["disa_enddate"]));
+		}
+	    $disalist = $this->getDisasterData();
+	    $ricedata["disa_number"] = count($disalist);
+	    $this->assign("disalist", $disalist);
+	    $this->assign("ricedata", $ricedata);
+		$this->assign("disadata", $data);
+		$this->display();	
+	}
+	
+	/* 显示审核灾难的页面  */
+	public function uncheckDisaster(){
+		$disater = M("InfoDisaster");
+		$disadata = $disater->where("disa_status=2")->select();
+		foreach($disadata as &$value){
+			$value["disa_dist"] = getDistrictNameById($value["disa_dist"]);
+			$value["disa_status"] = getDisasterStatus($value["disa_status"]);
+			$value["disa_situ"] = getDisaSituById($value["disa_situ"]);
+			$value["disa_begindate"] = date("Y-m-d", strtotime($value["disa_begindate"]));
+			$value["disa_enddate"] = date("Y-m-d", strtotime($value["disa_enddate"]));
+		}
+	    $disalist = $this->getDisasterData();
+	    $ricedata["disa_number"] = count($disalist);
+	    $this->assign("disalist", $disalist);
+	    $this->assign("ricedata", $ricedata);
+		$this->assign("disasterdata", $disadata);
+		$this->display();
+	}
+	/*  审核灾难 */
+	public function checkDisaster(){
+		if (IS_POST){
+			if (!empty($_POST["failed"])){  //驳回信息
+				$failed = true;	 //
+			}
+			else{
+				$failed = false;
+			}
+			$disaster = D("InfoDisaster");
+			$did = I("disa_id");
+
+			$result = $disaster->checkDisaster($did, $failed);
+			if ($result){
+				$this->success("审核成功", U("uncheckDisaster"));	
+			}
+			else{
+				$this->error("审核失败", U("uncheckDisaster"));	
+			}
+		}
+		else{
+			$did = I("disa_id");
+			$disater = M("InfoDisaster");
+			$data = $disater->where("disa_id='$did'")->find();
+			$data["disa_dist"] = getDistrictNameById($data["disa_dist"]);
+			$data["disa_situ"] = getDisaSituById($data["disa_situ"]);
+			$data["disa_begindate"] = date("Y-m-d", strtotime($data["disa_begindate"]));
+			$data["disa_enddate"] = date("Y-m-d", strtotime($data["disa_enddate"]));
+		    $disalist = $this->getDisasterData();
+		    $ricedata["disa_number"] = count($disalist);
+		    $this->assign("disalist", $disalist);
+		    $this->assign("ricedata", $ricedata);
+			$this->assign("disasterdata", $data);
+			$this->display();
+		}
+	}
+
+	/*
+		更新灾难信息
+	*/
+	public function updateDisaster(){
+		$disa_id = I("disa_id");
+		if(IS_POST){
+			$disaster = D("InfoDisaster");
+			$data["disa_id"] = $disa_id;
+			$data["disa_dist"] = getDistrictIdByName(I("disa_dist"));
+			$data["disa_begindate"] = date(I("disa_begindate"));
+			$data["disa_enddate"] = date(I("disa_enddate"));
+			$data["disa_situ"] = I("disa_situ");
+			$data["disa_area"] = I("disa_area");
+			$data["disa_eloss"] = I("disa_eloss");
+			if ($data["disa_begindate"] <= $data["disa_enddate"]) { //判断灾难开始时间和结束时间的大小
+				$result = $disaster->updateDisaster($data);
+				if($result){
+					$this->success("修改成功！", U("manageDisaster"));
+				}
+				else{
+					//$this->redirect(U("updateDisaster"),"",3, $disaster->getError());
+					$this->error($disaster->getError());
+				}
+			}
+			else{
+				$this->error("起始时间不能晚于结束时间!");
+			}
+		}
+		else{
+			$disaster = M("InfoDisaster");
+			$data = $disaster->where("disa_id='$disa_id'")->find();
+			$data["disa_begindate"] = date("Y-m-d", strtotime($data["disa_begindate"]));
+			$data["disa_enddate"] = date("Y-m-d", strtotime($data["disa_enddate"]));
+			$data["disa_dist"] = getDistrictNameById($data["disa_dist"]);
+		    $disalist = $this->getDisasterData();
+		    $ricedata["disa_number"] = count($disalist);
+		    $this->assign("disalist", $disalist);
+		    $this->assign("ricedata", $ricedata);
+			$this->assign("disadata", $data);
+			$this->display();
+		}
+	}
+
+	/*
+	删除灾难信息
+	@param disa_id
+	*/
+	public function deleteDisaster(){
+		$disa_id = I("disa_id");
+		$disaster = D("InfoDisaster");
+		$did = $disaster->deleteDisaster($disa_id);
+		if ($did){
+			$this->success("删除成功");
+		}
+		else{
+			$this->error("删除失败");
+		}
+	}
+
+	/**
+	*导出excell表格，格式为xls
+	*@param Array riceIDs 需要导出的字段；
+	*/
+	public function exportDataToExcel(){
+		if(ISPOST){
+			vendor('Classes.PHPExcel');
+			$objExcel = \PHPExcel_IOFactory::load(dirname(__FILE__).'\template_of_disaster.xlsx');
+       	 	//set document Property
+			$objWriter = \PHPExcel_IOFactory::createWriter($objExcel, 'Excel2007');
+
+			$disasterIds = I('disaster_ids');
+
+			if($disasterIds==null){
+				$this->error("请选择需要导出数据项");
+			}
+			$disasterModel = D('InfoDisaster');
+			// Add data
+			for ($i = 0; $i < $size; $i++) {
+				$disasterData=$disasterModel->where("disa_id = '$disasterIds[$i]'")->find();
+
+				$j =$i+1;
+				$objExcel->getActiveSheet()
+				->setCellValue('A' . $j, getDistrictNameById($disasterData['disa_dist']))
+				->setCellValue('B' . $j, $disasterData['disa_begindate']) 
+				->setCellValue('C' . $j, $disasterData['disa_enddate']) 
+				->setCellValue('D' . $j, $disasterData['disa_situ']) 
+				->setCellValue('E' . $j, $disasterData['disa_area']) 
+				->setCellValue('F' . $j, $disasterData['disa_eloss']) 		                             					                              	                                      					                              	                                      					                              
+				->setCellValue('G' . $j, $disasterData['disa_eloss']); 		                             					                              	                                      					                              	                                      					                              
+			}
+
+			$outfile = date('Y:M:D:H:i:s').".xlsx";
+
+       		 //export to exploer
+
+			header("Content-Type: application/force-download");
+			header("Content-Type: application/octet-stream");
+			header("Content-Type: application/download");
+			header('Content-Disposition:inline;filename="'.$outfile.'"');
+			header("Content-Transfer-Encoding: binary");
+			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+			header("Pragma: no-cache");
+			$objWriter->save('php://output');
+		}
+	}
+}

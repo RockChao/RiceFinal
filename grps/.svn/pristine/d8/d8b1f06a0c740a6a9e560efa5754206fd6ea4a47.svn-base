@@ -1,0 +1,13 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Home\Controller;
+
+class DisaterController extends HomeController{
+	/*  添加灾难信息 */
+	public function addDisater(){
+		if (IS_POST){
+			
+		}	
+	}	
+}

@@ -1,0 +1,82 @@
+<?php
+//作者：刘建安
+//时间：2014/10/19
+namespace Admin\Model;
+use Model\Modified\InfoModifiedModel;
+use Model;
+use Think;
+
+
+
+class InfoRiceModel extends Model\Rice\InfoRiceModel {
+	   
+	/*  更新水稻信息 
+	*/
+	public function updateRice($data, $modifier, $reason){
+		$calculateddata = $this->calculateIndicator($data);   //计算指标
+		if ($this->create($calculateddata)){
+			$tranDb = new Think\Model();
+			$tranDb->startTrans();  //启动事务，保证数据的一致性
+				
+			$rice_id = $calculateddata['rice_id'];	
+			$this->where("rice_id='$rice_id'");
+			$rid = $this->save($calculateddata);
+				
+			$modified = new InfoModifiedModel();
+			$time = date("Y-m-d H:i:s");
+			$modifiedData['rice_id'] = $rice_id;
+			$modifiedData['modifier_level'] = $modifier['modifier_level'];
+			$modifiedData['modifier_id'] = $modifier['modifier_id'];
+			$modifiedData['modifier_reason'] = $reason;
+			$modifiedData['modified_date'] = $time;
+			$mid = $modified->addModified($modifiedData);
+			if ($rid && $mid){  //如果水稻信息和日志都保存成功，则提交事务
+				$tranDb->commit();
+				return true;
+			}
+			else{  //保存失败，回滚
+				$tranDb->rollback();
+				$this->error = "水稻更新失败！";
+				return false;
+			}
+		}
+		else{
+			return false;;	
+		}
+	}
+	
+	/*  审核水稻信息 
+	@param $rice_id
+	return bool
+	0获取失败 1未提交 2提交审核中 3提交已通过 4提交未通过
+	*/
+	public function checkRice($rice_id, $failed,$rice_kind){
+		$this->where("rice_id=$rice_id");
+		if ($failed)  //驳回审核
+			$status = 4;
+		else  //通过审核
+			$status = 3;
+		return  $this->setRiceState($rice_id, $status, $rice_kind);
+	}
+
+	/*删除已通过水稻
+	*@param integer $rice_id
+	*@return integer 成功返回1，失败返回0
+	*/
+	public function deleteRice($rice_id){
+		$riceStatus=$this->where("rice_id=$rice_id")->getField('$rice_status');
+		if($riceStatus==1){
+			if($this->where("rice_id=$rice_id")->delete())
+				return ture;
+			else{
+				$this->error = "水稻删除失败，未知原因";
+				return false;
+			}
+		}
+		else{
+			$this->error="删除失败，水稻未通过审核";
+			return false;
+		}
+	}
+}
+?>

@@ -1,0 +1,115 @@
+<script type="text/javascript">
+
+    var map = new BMap.Map("allmap");
+    //设置地图的中心位置
+    var district = [
+        <?php  $dist_longitude=session("dist_longitude"); $dist_latitude=session("dist_latitude"); $year = date('Y'); ?>
+            {centerX: "<?php echo $dist_longitude;  ?>" , centerY:"<?php echo $dist_latitude;  ?>"},
+    ];
+
+    //配置区县窗口显示的信息
+    var city = [
+        <?php foreach ($distlist as $key => $value):?>
+            <?php foreach ($distdata as $key1 => $v): ?>
+                <?php if ($v['disa_dist'] == $value['dist_id']) {?>
+                    {dist_id: "<?php echo $value['dist_id']?>", disa_id: "<?php echo $v['disa_id']?>",  pointX: "<?php echo $value['dist_longitude']?>" , pointY:"<?php echo $value['dist_latitude']?>", pointDangerPara:1, zoomPara: 10, dName:"<?php echo $value['dist_name']?>", disa_area:"<?php echo $v['disa_area']?>",disa_eloss:"<?php echo $v['disa_eloss']?>",disa_begindate:"<?php echo $v['disa_begindate']?>",disa_enddate: "<?php echo $v['disa_enddate']?>",disa_situ: "<?php echo $v['disa_situ']?>"},
+                <?php } ?>
+                    
+                <?php endforeach; ?>        
+        <?php endforeach; ?>
+    ];
+
+    //配置水稻标签显示的信息
+    var waveCity = [
+        <?php foreach ($distlist as $key => $value):?>
+            <?php foreach ($wavedata as $key1 => $v): ?>
+                <?php if ($v['dist_id'] == $value['dist_id']) {?>
+                    {dist_id: "<?php echo $value['dist_id']?>", wave_id: "<?php echo $v['wave_id']?>",  pointX: "<?php echo $value['dist_longitude']?>" , pointY:"<?php echo $value['dist_latitude']?>", pointDangerPara:1, zoomPara: 10, dName:"<?php echo $value['dist_name']?>",level: "<?php echo $v['level']?>",wave_level: "<?php echo $v['wave_level']?>",rice_id: "<?php echo $v['rice_id']?>"},
+                <?php } ?>
+                    
+                <?php endforeach; ?>        
+        <?php endforeach; ?>
+    ];
+
+    //console.log(city);
+    var pointNum =  city.length;
+    var waveNum = waveCity.length;
+    var sContent = [];
+    var infoWindow = [];
+    for(var i=0; i<pointNum; i++){
+        sContent[i] = "<h4>" + city[i].dist_id + "</h4>";
+        infoWindow[i] = new BMap.InfoWindow(sContent[i]);
+    }
+    //地图初始缩放比例
+    var zoomPara = 13;
+
+    //需要的是地图显示中心点，每个地区不一样
+    var centerPoint = new BMap.Point(district[0].centerX, district[0].centerY);
+    map.centerAndZoom(centerPoint, zoomPara);
+    var markerPoint = [];
+    var marker = [];
+    for(var i=0; i<pointNum; i++){
+        if(city[i]!=null){
+            addMarkerPoint(city[i]);
+        }
+    }
+    for(var i=0; i<waveNum; i++){
+        if(waveCity[i]!=null){
+            addRiceMarkerPoint(waveCity[i]);
+        }
+    }
+
+    //地图缩放工具
+    var ctrl_nav = new BMap.NavigationControl({anchor:BMAP_ANCHOR_TOP_LEFT,type:BMAP_NAVIGATION_CONTROL_LARGE});
+    map.addControl(ctrl_nav); 
+
+    //配置灾难标记点信息
+    function addMarkerPoint(cityregiondata){
+        var _point = new BMap.Point(cityregiondata.pointX, cityregiondata.pointY);
+        var _marker = new BMap.Marker(_point);
+	
+		
+        var _sContent = "<span>区名/县名：</span>" + 
+        "<span>" + cityregiondata.dName + "</span>" +
+        "<br/>" +
+        "<span>起始日期：</span>" + 
+        "<span>" + cityregiondata.disa_begindate + "</span><br/>" + 
+        "<span>结束日期：</span>" +
+        "<span>" + cityregiondata.disa_enddate + "</span><br/>" +
+        "<span>灾情状况：</span>" +
+        "<span>" + cityregiondata.disa_situ + "</span><br/>" +
+        "<span>受灾面积：</span>" +
+        "<span>" + cityregiondata.disa_area + "</span><br/>" +
+        "<span>经济损失：</span>" +
+        "<span>" + cityregiondata.disa_eloss + "</span><br/>" +
+        "<a class='btn btn-primary'  role='button' href='__URL__/../Disaster/detailDisaster?disa_id=" + cityregiondata.disa_id +"'>详情</a>"+
+        "<a class='btn btn-primary'  role='button' href='__URL__/../Disaster/checkDisaster?disa_id=" + cityregiondata.disa_id +"'>审核</a>";
+
+        var _iw = new BMap.InfoWindow(_sContent);
+        _marker.addEventListener("click", function(){
+            this.openInfoWindow(_iw);
+        });
+        map.addOverlay(_marker);
+    }
+
+    //配置水稻预警标记点信息
+    function addRiceMarkerPoint(cityregiondata){
+        var icon = new BMap.Icon("Public\\img\\12.png", new BMap.Size(20, 32), {anchor: new BMap.Size(30, 40)});
+        var _point = new BMap.Point(cityregiondata.pointX, cityregiondata.pointY);
+        var _marker = new BMap.Marker(_point,{icon:icon});
+    
+        var _sContent = "<span>区名/县名：</span>" + 
+        "<span>" + cityregiondata.dName + "</span>" +
+        "<br/>" +
+        "<span>预警等级：</span>" +
+        "<span>" + cityregiondata.level + "</span><br/>" +
+        "<a class='btn btn-primary'  role='button' href='__URL__/../Rice/detailWave?rice_id=" + cityregiondata.rice_id + "&wave_id=" + cityregiondata.wave_id +"'>详情</a>";
+
+        var _iw = new BMap.InfoWindow(_sContent);
+        _marker.addEventListener("click", function(){
+            this.openInfoWindow(_iw);
+        });
+        map.addOverlay(_marker);
+    }
+    map.enableScrollWheelZoom();
+</script>

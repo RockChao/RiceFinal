@@ -1,0 +1,150 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<title>广东省市县稻谷预警系统</title>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css"/>
+		
+		<script type="text/javascript" src="__PUBLIC__/js/jquery.js"></script>
+			<script type="text/javascript" >
+			function ChangeSelect(city_id){
+				var obj = document.getElementById("rice_region");
+				obj.options.length = 0;
+				<?php foreach($distlist as $key => $value ): ?>
+				if (city_id == <?php  echo $value['dist_belongto']; ?>){
+					t =" <?php  echo $value['dist_name']; ?> ";
+				    v = "<?php  echo $value['dist_id']; ?>";		  
+					obj.options.add(new Option(t,v));				
+				}
+				<?php  endforeach; ?>		
+			}
+			</script>
+	</head>
+	<body>
+
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo U('Index/index')?>">广东省市县稻谷预警系统</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li >
+							<a href="<?php echo U('Index/index')?>">首页</a>
+						</li>
+							<?php $username = session('user_name');
+							      $userlevel = session('user_level');
+								if(isset($username)&&$userlevel == 1){
+									 ?>
+										<li class="dropdown" id="accountmenu">
+                        					<a class="dropdown-toggle" data-toggle="dropdown" href="#">用户管理<b class="caret"></b></a>
+                        						<ul class="dropdown-menu">
+                           							<li><a href="<?php echo U('User/addUser')?>">用户新增</a></li>
+                            						<li><a href="<?php echo U('User/manageUser')?>">用户查看</a></li>
+                        						</ul>
+                    					</li>
+									    <li>
+
+									    <li class="dropdown" id="accountmenu">
+                        					<a class="dropdown-toggle" data-toggle="dropdown" href="#">水稻管理<b class="caret"></b></a>
+                        						<ul class="dropdown-menu">
+                           							<li><a href="<?php echo U('Rice/uncheckRice')?>">水稻审核</a></li>
+                            						<li><a href="<?php echo U('Rice/manageRice')?>">水稻查看</a></li>
+                        						</ul>
+                    					</li>
+									   
+
+										<li>
+											<a href="<?php echo U('User/logout')?>" class="logout">注销</a>
+										</li>
+							<?php }
+								else{ ?>
+									<li><a href="<?php echo U('User/login')?>" class="login">登录</a>	</li>
+								<?php } ?>
+
+					</ul>
+				</div>
+			</div>
+			<script type="text/javascript" src="__PUBLIC__/js/bootstrap-dropdown.js"></script>
+					<script type="text/javascript">
+				        $(document).ready(function () {
+				            $('.dropdown-toggle').dropdown();
+				        });
+				   </script>
+		</div>
+		
+		<div class="add">
+			<form  action="__URL__/../Rice/searchRice"  method = "post" class="form-horizontal" role="form">
+
+			    <div class="form-group">
+			      	<label for="year" class="col-sm-2 control-label">年份：</label>
+			      	<div class="col-sm-3">
+			         	<select  name="year" id="year">		
+   							<option></option>	
+			         		<?php   foreach($years as $key => $value): ?>         	
+			         			<option value="<?php  echo $value['year']; ?>"><?php  echo $value['year'];  ?></option>		         			
+			         		<?php  endforeach; ?>
+			         	</select>
+			      	</div>
+			    </div>
+			    
+			    <div class="form-group">
+			      	<label for="city" class="col-sm-2 control-label">城市：</label>
+			      	<div class="col-sm-3">
+			         	<select  onChange="ChangeSelect(this.value);">  
+   							<option></option> 			
+			         		<?php   foreach($citylist as $key => $value): ?>         	
+			         			<option value="<?php  echo $value['dist_id']; ?>"><?php  echo $value['dist_name'];  ?></option>		         			
+			         		<?php  endforeach; ?>
+			         	</select>
+			      	
+			      	<label >区县：</label>
+			         	<select name="rice_region" id="rice_region" >
+			         		<option></option>
+			         		</select>
+			      	</div>
+			    </div>
+			        
+			    <div class="form-group">
+			      	<div class="col-sm-offset-2 col-sm-10">
+			         	<button type="submit" class="btn btn-primary">查询</button>
+			     	</div>
+			   	</div>		  
+			</form>
+		</div>
+
+
+        <table class="table table-bordered">
+		    <caption>水稻信息</caption>
+		    <thead>
+		        <tr>
+		            <th>区县</th>
+			        <th>年份</th>
+			        <th>总人口</th>
+			        <th>农业人口</th>
+			        <th>耕地面积</th>
+			        <th>水田面积</th>
+			        <th>是否通过审核</th>
+			        <th>操作</th>
+		     	</tr>
+		   </thead>
+		   <tbody>
+		      	<?php foreach ($ricedata as $key => $value): ?>
+		   			<tr>
+			        	<td><?php echo $value['dist_name']?></td>
+			         	<td><?php echo $value['year']?></td>
+			         	<td><?php echo $value['population']?></td>
+			         	<td><?php echo $value['agri_population']?></td>
+			         	<td><?php echo $value['agri_area']?></td>
+			         	<td><?php echo $value['field_area']?></td>
+			         	<td><?php echo $value['rice_status']?></td>
+			         	<td>	
+			         		<a href="__URL__/../Rice/detailRice?rice_id=<?php  echo $value['rice_id']; ?>" class="btn btn-primary" role="button">详情</a>
+			         	</td>
+		      		</tr>
+		   		<?php endforeach;?>
+		   	</tbody>
+		</table>
+	</body>
+</html>		

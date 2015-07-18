@@ -1,0 +1,42 @@
+﻿<html>
+<head>
+        <title>广东省市县稻谷预警系统</title><meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="__PUBLIC__/css/bootstrap1.min.css" />
+		<link rel="stylesheet" href="__PUBLIC__/css/bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="__PUBLIC__/css/matrix-login.css" />
+        <link href="__PUBLIC__/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    </head>
+    <body>
+    	<div class="title">
+    		<p>广东省市县稻谷预警系统</p>
+    	</div>
+        <div id="loginbox"> 
+            <fieldset class="form" >
+            <form id="loginform" class="form-vertical" action = "__SELF__", method = "post">
+            	<div class="control-group normal_text"> <h1><img src="__PUBLIC__/img/welcome.jpg" style=" height:160px; width:400px;"alt="Logo" /></h1></div>
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="main_input_box">
+                            <span class="add-on bg_lg"><i class="icon-user"></i></span><input type="text" name = "user_name" placeholder="用户名" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="main_input_box">
+                            <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="password" name = "user_pw" placeholder="密码" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <span class="pull-right"><input type="submit" class="btn btn-success" value="登录"/> </span>
+                </div>
+            </form>
+        	</fieldset>	
+        </div>
+    </body>
+
+</html>

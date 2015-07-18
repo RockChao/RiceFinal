@@ -1,0 +1,104 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<title>广东省市县稻谷预警系统</title>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css"/>
+		<script type="text/javascript" src="__PUBLIC__/js/jquery-1.7.2.min.js"></script>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="<?php echo U('Index/index')?>">广东省市县稻谷预警系统</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li>
+							<a href="<?php echo U('Index/index')?>"><i class="glyphicon glyphicon-home"></i> 首页</a>
+						</li>
+						<li class="dropdown">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> 用户管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                        		<li><a href="<?php echo U('User/addUser')?>"><i class="glyphicon glyphicon-plus"></i> 用户新增</a></li>
+                            	<li><a href="<?php echo U('User/manageUser')?>"><i class="glyphicon glyphicon-search"></i> 用户查看</a></li>
+                        	</ul>
+                    	</li>
+						
+						<li>
+							<li role="dropdown" class="active">
+                        	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-list"></i> 水稻管理<b class="caret"></b></a>
+                        	<ul class="dropdown-menu">
+                           		<li><a href="<?php echo U('Rice/uncheckRice')?>"><i class="glyphicon glyphicon-ok"></i> 水稻审核</a></li>
+                            	<li><a href="<?php echo U('Rice/manageRice')?>"><i class="glyphicon glyphicon-eye-open"></i> 水稻查看</a></li>
+                        	</ul>
+                    	</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a><?php echo session("user_name");?></a>
+						</li>
+
+						<li>
+							<a href="<?php echo U('User/logout')?>" class="logout"><i class="glyphicon glyphicon-off"></i> 注销</a>
+						</li>
+					</ul>
+				</div>
+				<script type="text/javascript" src="__PUBLIC__/js/bootstrap-dropdown.js"></script>
+					<script type="text/javascript">
+				        $(document).ready(function () {
+				            $('.dropdown-toggle').dropdown();
+				        });
+				</script>
+			</div>
+		</div>
+		<div class="add">
+			<form  method = "post" class="form-horizontal" role="form">
+
+				<div class="form-group">
+			      	<label class="col-sm-2 control-label">受灾地区：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="disa_dist"  value="<?php echo $disasterdata['disa_dist'];?>" readonly>
+			      	</div>
+			   	</div>
+
+				<div class="form-group">
+			      	<label class="col-sm-2 control-label">受灾时间：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="disa_date" value="<?php echo $disasterdata['disa_date'];?>" readonly>
+			      	</div>
+			   	</div>
+
+			   	<div class="form-group">
+			      	<label class="col-sm-2 control-label">受灾原因：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="disa_situ" value="<?php echo $disasterdata['disa_situ'];?>" readonly>
+			      	</div>
+			   	</div>
+
+			  	<div class="form-group">
+			      	<label class="col-sm-2 control-label">受灾面积：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="disa_area"  value="<?php echo $disasterdata['disa_area'];?>" readonly>
+			      	</div>
+			   	</div>
+			   	
+			   	<div class="form-group">
+			      	<label class="col-sm-2 control-label">经济损失：</label>
+			      	<div class="col-sm-3">
+			         	<input type="text" class="form-control" name="population" value="<?php echo $disasterdata['disa_eloss'];?>" readonly>
+			      	</div>
+			   	</div>
+
+			    <div class="form-group">
+			      	<div class="col-sm-offset-2 col-sm-10">
+			         	<input type="submit" class="btn btn-primary" value="确认审核">
+			          <input type="submit" name="failed" id="failed" class="btn btn-primary" value="驳回信息">
+			     	</div>	
+			   	</div>
+
+			</form>
+		</div>
+	</body>
+</html>		

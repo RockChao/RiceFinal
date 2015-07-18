@@ -1,0 +1,13 @@
+<?php
+//作者：刘建安
+//时间：2014/11/8
+
+namespace Admin\Controller;
+use Think\Controller;
+class AdminController extends Controller{
+	public function _initialize(){
+			if (isLogin() == 0 || session("user_level") != 1){
+				$this->redirect(U("User/login"), "", 2, "权限不足或未登陆！");
+			}
+	}
+}

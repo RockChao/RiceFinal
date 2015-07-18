@@ -1,0 +1,56 @@
+<?php
+//作者：刘建安
+//时间：2014/11/9
+namespace Admin\Controller;
+
+class DisasterController extends AdminController{
+/*  列出所有灾难的信息 */
+	public function manageDisaster(){
+		$disater = M("InfoDisaster");
+		$data = $disater->select();
+		foreach($data as &$value){
+			$value["disa_situ"] = getDisaSituById($value["disa_situ"]);
+			$value["disa_status"] = getRiceStatus($value["disa_status"]);
+		}
+		$this->assign("disadata", $data);
+		$this->display();
+	}
+	
+	/* 列出所有未审核的灾难信息 */
+	public function uncheckDisaster(){
+		$disater = M("InfoDisaster");
+		$disadata = $disater->where("disa_status=2")->select();
+		foreach($disadata as &$value){
+			$value["disa_dist"] = getDistrictNameById($value["disa_dist"]);
+			$value["disa_situ"] = getDisaSituById($value["disa_situ"]);
+		}
+		$this->assign("disasterdata", $disadata);
+		$this->display();
+	}
+	/*  审核灾难信息 */
+	public function checkDisater(){
+		if (IS_POST){
+			if (!empty($_POST["failed"])){  //判断是否是驳回审核
+				$failed = true;	 //驳回审核
+			}
+			else{
+				$failed = false;	
+			}
+			$disater = M("InfoDisaster");
+			$did = I("disa_id");
+			if ($disater->checkDisater($did, $failed)){
+				$this->success("审核成功！", U("manageDisater"));	
+			}
+			else{
+				$this->error("审核失败！", U("manageDisater"));	
+			}
+		}
+		else{
+			$did = I("disa_id");
+			$disater = M("InfoDisaster");
+			$data = $disater->where("id='$did'")->find();
+			$this->assign("disadata", $data);
+			$this->display();
+		}
+	}	
+}

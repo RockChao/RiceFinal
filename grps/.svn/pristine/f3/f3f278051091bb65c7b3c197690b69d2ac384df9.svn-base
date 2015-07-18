@@ -1,0 +1,195 @@
+<?php
+//author：baolei
+//date: 2014/10/14
+namespace Home\Controller;
+use Model\User\InfoUserModel;
+use Think\Controller;
+
+class RiceController extends Controller{
+	/*
+	*更新水稻信息
+	*@param year               年份
+	*@param population         总人口
+	*@param agri_population    农业人口：	
+	*@param agri_area          耕地面积：
+	*@param field_area         水田面积
+	*@param total_sown_area    总播种面积
+	*@param zone_area          区域面积
+	*@param e_sown_area        早稻播种面积
+	*@param e_disaster_area    早稻受灾面积
+	*@param e_production       早稻产量
+	*@param e_market_price     早稻市场价格
+	*@param e_purchase_price   早稻收购价格
+	*@param e_fertilizer_price 早稻化肥价格
+	*@param l_sown_area        晚稻播种面积
+	*@param l_disaster_area    晚稻受灾面积
+	*@param l_production       晚稻产量
+	*@param l_market_price     晚稻市场价格
+	*@param l_purchase_price   晚稻收购价格
+	*@param l_fertilizer_price 晚稻化肥价格
+	*/
+	public function updateRice()
+	{
+		$user_id = session('user_id');
+		if(!islogin())
+			$this->error('您还未登录', U('User/login'));
+		if(IS_POST){
+			$rice = D("InfoRice");
+			$rice_id = I('rice_id');
+		//判断是否通过
+			$riceStatus = $rice->where("rice_id='$rice_id'")->getField("rice_status");
+			if($riceStatus != 1)//0 不通过 1 通过 2 审核中
+			{
+				$dist_id = M('InfoUser')->where("user_id='$user_id'")->getField("user_region");
+				$data['user_id'] = $user_id;
+				$data['rice_id'] = $rice_id;
+				$data['dist_id'] =$dist_id; 
+				$data['year'] = I('year');
+				$data['population'] = I('population');
+				$data['agri_population'] = I('agri_population');
+				$data['agri_area'] = I('agri_area');
+				$data['field_area'] = I('field_area');
+				$data['total_sown_area'] = I('total_sown_area');
+				$data['zone_area'] = I('zone_area');
+						//早稻信息
+				$data['e_sown_area'] = I('e_sown_area');
+				$data['e_disaster_area'] = I('e_disaster_area');
+				$data['e_production'] = I('e_production');
+				$data['e_market_price'] = I('e_market_price');
+				$data['e_purchase_price'] = I('e_purchase_price');
+				$data['e_fertilizer_price'] = I('e_fertilizer_price');
+						//晚稻信息
+				$data['l_sown_area']= I('l_sown_area');
+				$data['l_disaster_area'] = I('l_disaster_area');
+				$data['l_production'] = I('l_production');
+				$data['l_market_price'] = I('l_market_price');
+				$data['l_purchase_price'] = I('l_purchase_price');
+				$data['l_fertilizer_price'] = I('l_fertilizer_price');
+				$result = $rice->updateRice($data);
+				if ($result)
+					$this->success("修改成功！", U("manageRice"));	
+				else
+					$this->error($rice->getError());	
+			}
+			else if (empty($riceStatus)){
+				$this->error("该记录不存在！");	
+			}
+			else{
+				$this->error("该记录通过审核！");
+			}
+		}
+		else
+		{
+			$this->display();
+		}	
+	}
+
+	/*
+	*删除水稻信息
+	*@param integer rice_id 将被删除水稻的id
+	*/
+	public function deleteRice(){
+		$rice_id = I("rice_id");
+		$rice = D('InfoRice');
+		if($rice ->deleteRice($rice_id))
+			$this->success("删除用户成功！");
+		else
+			$this->error(D('InfoRice')->getError);		
+	}
+
+	/*
+	*管理水稻信息
+	*/
+	public function manageRice(){
+		$user_id = session('user_id');
+		$rice = M("InfoRice")->where("user_id= '$user_id'")->select();
+		foreach($rice as  &$value){
+			$dist_id = $value['dist_id'];
+			$dist_name = getDistrictNameByID($dist_id);
+			$value['dist_name'] = $dist_name;   //将地区ID换成地区名
+			//显示审核状态
+			$value['rice_status'] = getRiceStatus($value['rice_status'] )
+		}
+			$this->assign("ricedata",$rice);
+			$this->display();
+	}
+	
+		/*
+	*增加水稻信息记录 
+	*@param year               年份
+	*@param population         总人口
+	*@param agri_population    农业人口：	
+	*@param agri_area          耕地面积：
+	*@param field_area         水田面积
+	*@param total_sown_area    总播种面积
+	*@param zone_area          区域面积
+	*@param e_sown_area        早稻播种面积
+	*@param e_disaster_area    早稻受灾面积
+	*@param e_production       早稻产量
+	*@param e_market_price     早稻市场价格
+	*@param e_purchase_price   早稻收购价格
+	*@param e_fertilizer_price 早稻化肥价格
+	*@param l_sown_area        晚稻播种面积
+	*@param l_disaster_area    晚稻受灾面积
+	*@param l_production       晚稻产量
+	*@param l_market_price     晚稻市场价格
+	*@param l_purchase_price   晚稻收购价格
+	*@param l_fertilizer_price 晚稻化肥价格
+	*/
+	public function addRice(){
+		if (IS_POST){
+			
+			$user_id = session('user_id');
+
+			//获取用户所属区域
+			$user = M("InfoUser");
+			$dist_id = $user->where("user_id='$user_id'")->getField("user_region");
+
+
+			$data['user_id'] = $user_id;
+			$data['dist_id'] = $dist_id;
+			$data['lastmodifed'] = date("Y-m-d H:i:s" ,time());
+
+			$data['year'] = I('year');
+			$data['population'] = I('population');
+			$data['agri_population'] = I('agri_population');
+			$data['agri_area'] = I('agri_area');
+			$data['field_area'] = I('field_area');
+			$data['total_sown_area'] = I('total_sown_area');
+			$data['zone_area'] = I('zone_area');
+				//早稻信息
+			$data['e_sown_area'] = I('e_sown_area');
+			$data['e_disaster_area'] = I('e_disaster_area');
+			$data['e_production'] = I('e_production');
+			$data['e_market_price'] = I('e_market_price');
+			$data['e_purchase_price'] = I('e_purchase_price');
+			$data['e_fertilizer_price'] = I('e_fertilizer_price');
+				//晚稻信息
+			$data['l_sown_area']= I('l_sown_area');
+			$data['l_disaster_area'] = I('l_disaster_area');
+			$data['l_production'] = I('l_production');
+			$data['l_market_price'] = I('l_market_price');
+			$data['l_purchase_price'] = I('l_purchase_price');
+			$data['l_fertilizer_price'] = I('l_fertilizer_price');
+
+			//判断将添加的水稻信息是否已存在
+			$rice = D('InfoRice');
+			$year = $data['year'];
+			if($rice->where("user_id='$user_id' and year = $year")->select())
+				$this->error("记录已存在");
+			
+			$result = $rice->addRice($data);
+			if ($result){
+				$this->success("添加成功");	
+			}
+			else{
+				$this->error($rice->getError());	
+			}
+		}
+		else
+		{
+			$this->display();
+		}
+	}
+}
+
