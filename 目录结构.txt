@@ -1,0 +1,23 @@
++RiceWaring
+|  +Application
+|  | -Common
+|  | |
+|  | +Admin
+|  | |  -Behavior
+|  | |  -Common
+|  | |  -Controller	
+|  | |  -Model
+|  | |  -View
+|  | +User
+|  | |  -Behavior
+|  | |  -Common
+|  | |  -Controller	
+|  | |  -Model
+|  | |  -View
+|  | -Runtime
+|  +Public
+|  |
+|  +ThinkPHP
+
+
+说明：其中Adnin目录下是存放有关admin账户的所有功能实现，User类似
